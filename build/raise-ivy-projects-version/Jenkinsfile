@@ -1,0 +1,52 @@
+pipeline {
+  agent {
+    dockerfile {
+      dir 'build'
+    }
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    disableConcurrentBuilds()
+  }
+
+  triggers {
+    cron '@midnight'
+  }
+
+  parameters {
+    booleanParam name: 'dryRun', defaultValue: true, description: 'whether the build should push the changes or not'
+    string(
+      name: 'engineUrl',
+      description: 'Engine to use for conversion',
+      defaultValue: 'https://dev.axonivy.com/permalink/dev/axonivy-engine.zip'
+    )
+    string(
+      name: 'ivyVersion',
+      description: 'Ivy version',
+      defaultValue: '9.4.0'
+    )
+  }
+
+  stages {
+    stage('raise-ivy-project-version') {
+      steps {
+        script {
+          sh "git config --global user.name 'ivy-team'"
+          sh "git config --global user.email 'info@ivyteam.ch'"
+          withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o LogLevel=error']) {
+            sshagent(credentials: ['github-axonivy']) {
+              def dryRunCommand = params.dryRun ? '--dry-run' : ''
+              sh "export ivyVersion=${params.ivyVersion} && build/raise-ivy-projects-version/raise.sh " + params.engineUrl + " " + dryRunCommand
+              archiveArtifacts 'build/raise-ivy-projects-version/conversion*.txt'
+            }
+          }
+          def errors = readFile 'build/raise-ivy-projects-version/conversionError.txt'
+          if (errors != null && errors != "") {
+            error 'build finished with errors: \n' + errors
+          }
+        }
+      }
+    }
+  }
+}
