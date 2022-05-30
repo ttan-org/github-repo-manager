@@ -1,0 +1,38 @@
+pipeline {
+  agent {
+    dockerfile {
+      dir 'build'
+    }
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    disableConcurrentBuilds()
+  }
+
+  triggers {
+    cron '@midnight'
+  }
+
+  parameters {
+    booleanParam name: 'dryRun', defaultValue: true, description: 'Whether the build should really make a change or not'
+    string(name: 'branch', defaultValue: 'master', description: 'Source branch to tag e.g. master, release/8.0')
+    string(name: 'tag', defaultValue: 'v10.0.0', description: 'Tag to apply e.g v9.3.0')
+  }
+
+  stages {
+    stage('build') {
+      steps {
+        script {
+          withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
+            maven cmd: "clean compile exec:java " + 
+                       "-DDRY_RUN=${dryRun} " +
+                       "-DGITHUB.TOKEN.FILE=${tokenFile} " +
+                       "-Dexec.mainClass=\"com.axonivy.github.GitHubRepoTagger\" " +
+                       "-Dexec.args=\"${params.branch} ${params.tag}\""
+          }
+        }
+      }
+    }
+  }
+}

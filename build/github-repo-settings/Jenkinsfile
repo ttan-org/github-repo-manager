@@ -10,6 +10,10 @@ pipeline {
     disableConcurrentBuilds()
   }
 
+  parameters {
+    booleanParam name: 'dryRun', defaultValue: true, description: 'Whether the build should really make a change or not'
+  }
+
   triggers {
     cron '@midnight'
   }
@@ -19,7 +23,7 @@ pipeline {
       steps {
         script {
           withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
-            maven cmd: "clean compile exec:java -Dexec.mainClass=\"com.axonivy.github.GitHubRepoSettingsManager\" -Dexec.args=\" ${tokenFile} \""
+            maven cmd: "clean compile exec:java -DDRY_RUN=${params.dryRun} -DGITHUB.TOKEN.FILE=${tokenFile} -Dexec.mainClass=\"com.axonivy.github.GitHubRepoSettingsManager\""
           }
         }
       }
