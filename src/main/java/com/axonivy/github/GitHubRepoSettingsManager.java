@@ -9,10 +9,14 @@ import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHubBuilder;
 
-public class GitHubRepoManager {
+public class GitHubRepoSettingsManager {
 
   public static void main(String[] args) throws IOException {
-    var path = new File("github.token").toPath();
+    var file = "github.token";
+    if (args.length == 1) {
+      file = args[0];
+    }
+    var path = new File(file).toPath();
     var token = Files.readString(path);
     var github = new GitHubBuilder()
             .withOAuthToken(token)
@@ -40,7 +44,7 @@ public class GitHubRepoManager {
 
       // bug: always returns false
       if (!repo.isDeleteBranchOnMerge()) {
-        //log("delete branch on merge");
+        log("delete branch on merge");
         //repo.deleteBranchOnMerge(true);
       }
       if (repo.hasProjects()) {
@@ -62,13 +66,11 @@ public class GitHubRepoManager {
       }
 
       // patterns are not possible at the moment
-      var existingBranches = repo.getBranches();
-      var branches = List.of("master", "release/9.3", "release/9.2", "release/9.1", "release/8.0", "release/7.0");
-      for (var name : branches) {
-        if (!existingBranches.containsKey(name)) {
+      for (var branch : repo.getBranches().values()) {
+        if (!branch.getName().equals("master") && !branch.getName().startsWith("release/")) {
           continue;
         }
-        var branch = repo.getBranch(name);
+
         if (!isProtected(branch)) {
           log("protect " + branch.getName() + " branch");
           branch.enableProtection()
