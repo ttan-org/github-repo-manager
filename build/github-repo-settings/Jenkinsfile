@@ -1,0 +1,28 @@
+pipeline {
+  agent {
+    dockerfile {
+      dir 'build'
+    }
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    disableConcurrentBuilds()
+  }
+
+  triggers {
+    cron '@midnight'
+  }
+
+  stages {
+    stage('build') {
+      steps {
+        script {
+          withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
+            maven cmd: "clean compile exec:java -Dexec.mainClass=\"com.axonivy.github.GitHubRepoSettingsManager\" -Dexec.args=\" ${tokenFile} \""
+          }
+        }
+      }
+    }
+  }
+}
