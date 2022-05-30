@@ -1,27 +1,15 @@
 package com.axonivy.github;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHubBuilder;
 
 public class GitHubRepoSettingsManager {
 
   public static void main(String[] args) throws IOException {
-    var file = "github.token";
-    if (args.length == 1) {
-      file = args[0];
-    }
-    var path = new File(file).toPath();
-    var token = Files.readString(path);
-    var github = new GitHubBuilder()
-            .withOAuthToken(token)
-            .build();
-
+    var github = GitHubProvider.get();
     var org = github.getOrganization("axonivy");
     var repos = List.copyOf(org.getRepositories().values());
     for (var repo : repos) {
