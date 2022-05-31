@@ -1,6 +1,7 @@
 package com.axonivy.github;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.kohsuke.github.GHRepository;
 
@@ -18,9 +19,31 @@ public class GitHubRepoTagger {
     System.out.println("branch: " + branch);
     System.out.println("tag: " + tag);
     try {
-      var org = github.getOrganization("axonivy");
-      for (var repo : org.getRepositories().values()) {
-        new Tagger(repo, dryRun, branch, tag).run();
+      var repos = List.of(
+              "glsp-editor-client",
+              "rules",
+              "engine-cockpit",
+              "maven-plugins",
+              "dev-workflow-ui",
+              "webeditor",
+              "core",
+              "primefaces-themes",
+              "core-7",
+              "extension-demos",
+              "ulc-ria",
+              "admin-ui",
+              "process-editor-core",
+              "ws-axis",
+              "case-map-ui",
+              "thirdparty-libs",
+              "p2-targetplatform",
+              "doc-images",
+              "engine-launchers",
+              "core-icons",
+              "branding-images");
+      for (var repo : repos) {
+        var r = github.getRepository("axonivy/" + repo);
+        new Tagger(r, dryRun, branch, tag).run();
       }
     } catch (Exception ex) {
       throw new RuntimeException(ex);
@@ -40,7 +63,7 @@ public class GitHubRepoTagger {
       this.dryRun = dryRun;
       this.branch = branch;
       this.tag = tag;
-      this.message = "Release " + tag;
+      this.message = tag;
     }
 
     public void run() {
@@ -61,7 +84,14 @@ public class GitHubRepoTagger {
         }
         System.out.println("Create tag " + tag + " on " + repo.getFullName() + " ~ " + branch + " ~ " + sha1);
         if (!dryRun) {
-          repo.createTag(tag, message, sha1, "commit");
+          // we create a release and delete it again
+          // but the annoated tag still exists
+          // I don't know how I could create a annotated tag elseway
+          repo.createRelease(tag)
+            .name(message)
+            .commitish(sha1)
+            .create()
+            .delete();
         }
       } catch (IOException ex) {
         throw new RuntimeException(ex);
@@ -69,3 +99,7 @@ public class GitHubRepoTagger {
     }
   }
 }
+
+
+
+
