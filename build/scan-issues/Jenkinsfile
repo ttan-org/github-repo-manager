@@ -11,7 +11,7 @@ pipeline {
   }
 
   parameters {
-    booleanParam name: 'string', defaultValue: "8.0.27", description: 'Since version to list issues'
+    string name: 'version', defaultValue: "8.0.27", description: 'Since version to list issues'
   }
 
   triggers {
