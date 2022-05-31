@@ -35,7 +35,7 @@ public class GitHubRepoTagger {
     private final String tag;
     private final String message;
 
-    public Tagger(GHRepository repo, boolean dryRun, String branch, String tag, String message) {
+    public Tagger(GHRepository repo, boolean dryRun, String branch, String tag) {
       this.repo = repo;
       this.dryRun = dryRun;
       this.branch = branch;
