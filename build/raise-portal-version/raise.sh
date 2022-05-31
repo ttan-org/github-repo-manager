@@ -54,6 +54,7 @@ function raiseVersionOfOurRepos {
   repos=(
     "git@github.com:axonivy/core.git"
   )
+  message="Raise portal version to ${newVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 
