@@ -1,0 +1,35 @@
+pipeline {
+  agent {
+    dockerfile {
+      dir 'build'
+    }
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    disableConcurrentBuilds()
+  }
+
+  parameters {
+    booleanParam name: 'string', defaultValue: "8.0.27", description: 'Since version to list issues'
+  }
+
+  triggers {
+    cron '@midnight'
+  }
+
+  stages {
+    stage('build') {
+      steps {
+        script {
+          withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
+            maven cmd: "-f github-repo-manager clean compile exec:java " +
+                       "-DGITHUB.TOKEN.FILE=${tokenFile} " + 
+                       "-Dexec.mainClass=\"com.axonivy.github.GitHubIssueScanner\" " + 
+                       "-Dexec.args=\"${params.version}\""
+          }
+        }
+      }
+    }
+  }
+}
