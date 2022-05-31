@@ -1,6 +1,7 @@
 package com.axonivy.github;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kohsuke.github.GHRepository;
@@ -19,28 +20,48 @@ public class GitHubRepoTagger {
     System.out.println("branch: " + branch);
     System.out.println("tag: " + tag);
     try {
-      var repos = List.of(
-              "glsp-editor-client",
-              "rules",
-              "engine-cockpit",
-              "maven-plugins",
-              "dev-workflow-ui",
-              "webeditor",
-              "core",
-              "primefaces-themes",
-              "core-7",
-              "extension-demos",
-              "ulc-ria",
-              "admin-ui",
-              "process-editor-core",
-              "ws-axis",
-              "case-map-ui",
-              "thirdparty-libs",
-              "p2-targetplatform",
-              "doc-images",
-              "engine-launchers",
-              "core-icons",
-              "branding-images");
+      List<String> repos = new ArrayList<String>();
+
+      if ("release/7.0".equals(branch)) {
+        repos = List.of("core-7", "ulc-ria", "admin-ui", "rules", "maven-plugins", "webeditor");
+      } else if ("release/8.0".equals(branch)) {
+        repos = List.of(
+                "glsp-editor-client",
+                "rules",
+                "engine-cockpit",
+                "maven-plugins",
+                "webeditor",
+                "core",
+                "primefaces-themes",
+                "ws-axis",
+                "case-map-ui",
+                "thirdparty-libs",
+                "p2-targetplatform",
+                "doc-images",
+                "engine-launchers",
+                "core-icons");
+      } else {
+        // release/9.3 and upcoming
+        repos = List.of(
+                "glsp-editor-client",
+                "rules",
+                "engine-cockpit",
+                "maven-plugins",
+                "dev-workflow-ui",
+                "webeditor",
+                "core",
+                "primefaces-themes",
+                "process-editor-core",
+                "ws-axis",
+                "case-map-ui",
+                "thirdparty-libs",
+                "p2-targetplatform",
+                "doc-images",
+                "engine-launchers",
+                "core-icons",
+                "branding-images");
+      }
+
       for (var repo : repos) {
         var r = github.getRepository("axonivy/" + repo);
         new Tagger(r, dryRun, branch, tag).run();
@@ -73,7 +94,8 @@ public class GitHubRepoTagger {
           return;
         }
         if (!repo.getBranches().containsKey(branch)) {
-          System.out.println("Skipping repo " + repo.getFullName() + " because there is no " + branch + " branch");
+          var defaultBranch = repo.getDefaultBranch();
+          System.out.println("Repo " + repo.getFullName() + " has no " + branch + " branch, taking " + defaultBranch);
           return;
         }
 
@@ -99,7 +121,3 @@ public class GitHubRepoTagger {
     }
   }
 }
-
-
-
-
