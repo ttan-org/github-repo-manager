@@ -62,7 +62,7 @@ source "../raiseRepo.sh"
 tmpDirectory=$workDir
 
 function updateSingleRepo {
-  ./raise-build-plugin-version.sh ${releaseVersion} ${snapshotVersion} >> 'maven.log'
+  ./.ivy/raise-build-plugin-version.sh ${releaseVersion} ${snapshotVersion} >> 'maven.log'
   git commit -a -m "${message}"
 }
 

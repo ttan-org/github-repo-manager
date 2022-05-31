@@ -62,7 +62,7 @@ function raiseVersionOfOurRepos {
 }
 
 function updateSingleRepo {
-  ./raise-version.sh ${newVersion}
+  ./.ivy/raise-version.sh ${newVersion}
   git commit -a -m "Raise version to ${newVersion}"
 }
 
