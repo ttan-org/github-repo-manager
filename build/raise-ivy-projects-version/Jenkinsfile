@@ -35,11 +35,13 @@ pipeline {
           sh "git config --global user.name 'ivy-team'"
           sh "git config --global user.email 'info@ivyteam.ch'"
           withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o LogLevel=error']) {
-            sshagent(credentials: ['github-axonivy']) {
-              def dryRunCommand = params.dryRun ? '--dry-run' : ''
-              sh "export ivyVersion=${params.ivyVersion} && build/raise-ivy-projects-version/raise.sh " + params.engineUrl + " " + dryRunCommand
-              archiveArtifacts 'build/raise-ivy-projects-version/conversion*.txt'
-            }
+            withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
+              sshagent(credentials: ['github-axonivy']) {
+                def dryRunCommand = params.dryRun ? '--dry-run' : ''
+                sh "export ivyVersion=${params.ivyVersion} && build/raise-ivy-projects-version/raise.sh ${params.engineUrl} ${tokenFile} ${dryRunCommand}"
+                archiveArtifacts 'build/raise-ivy-projects-version/conversion*.txt'
+              }
+            }            
           }
           def errors = readFile 'build/raise-ivy-projects-version/conversionError.txt'
           if (errors != null && errors != "") {
