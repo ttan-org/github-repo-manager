@@ -83,6 +83,7 @@ updateProjectRepos() {
   projectRepos=(
     "git@github.com:axonivy/core.git"
   )
+  message="Raise ivy projects to latest version"
   runRepoUpdate 'raiseProjects' "${projectRepos[@]}"
 }
 

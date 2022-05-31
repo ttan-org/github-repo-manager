@@ -61,11 +61,12 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/process-editor-core.git"
     "git@github.com:axonivy/core.git"
   )
+  message="Raise version to ${newVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 
 function updateSingleRepo {
-  ./.ivy/raise-version.sh ${newVersion}
+  .ivy/raise-version.sh ${newVersion}
   git commit -a -m "Raise version to ${newVersion}"
 }
 
