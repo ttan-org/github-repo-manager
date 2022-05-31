@@ -15,6 +15,10 @@ public class GitHubIssueScanner {
   public static void main(String[] args) throws IOException {
     var input = args[0];// "8.0.25";
 
+    if (StringUtils.isEmpty(input)) {
+      throw new IllegalArgumentException("version not set");
+    }
+
     System.out.println("Start scanning issues ...");
     var github = GitHubProvider.get();
     var tagName = "v" + input;
