@@ -12,17 +12,15 @@ public class GitHubRepoTagger {
     var dryRun = DryRun.is();
     var branch = args[0];
     var tag = args[1];
-    var message = args[2];
 
     System.out.println("Start GitHub repository tagging");
     System.out.println("dryRun: " + dryRun);
     System.out.println("branch: " + branch);
     System.out.println("tag: " + tag);
-    System.out.println("message: " + message);
     try {
       var org = github.getOrganization("axonivy");
       for (var repo : org.getRepositories().values()) {
-        new Tagger(repo, dryRun, branch, tag, message).run();
+        new Tagger(repo, dryRun, branch, tag).run();
       }
     } catch (Exception ex) {
       throw new RuntimeException(ex);
@@ -42,7 +40,7 @@ public class GitHubRepoTagger {
       this.dryRun = dryRun;
       this.branch = branch;
       this.tag = tag;
-      this.message = message;
+      this.message = "Release " + tag;
     }
 
     public void run() {
