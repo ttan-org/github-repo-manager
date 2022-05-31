@@ -1,0 +1,29 @@
+pipeline {
+  agent {
+    dockerfile {
+      dir 'build'
+    }
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+  }
+
+  triggers {
+    cron '@weekly'
+  }
+
+  stages {
+    stage('raise-version') {
+      steps {        
+        script {
+          withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no']) {
+            sshagent(credentials: ['github-axonivy']) {
+              sh "build/backup-repos/create-backup.sh ./"
+            }
+          }
+        }
+      }
+    }
+  }
+}
