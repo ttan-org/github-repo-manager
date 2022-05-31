@@ -51,7 +51,7 @@ function raiseVersionOfOurRepos {
 }
 
 function updateSingleRepo {
-  ./.ivy/raise-portal-version.sh ${newVersion}
+  .ivy/raise-portal-version.sh ${newVersion}
   git commit -a -m "Raise portal version to ${newVersion}"
 }
 
