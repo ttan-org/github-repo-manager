@@ -55,7 +55,7 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/dev-workflow-ui.git"
     "git@github.com:axonivy/webeditor.git"
     "git@github.com:axonivy/rules.git"
-    "git@github.com:axonivy/glsp-editor.git"
+    "git@github.com:axonivy/process-editor-core.git"
     "git@github.com:axonivy/core.git"
   )
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
