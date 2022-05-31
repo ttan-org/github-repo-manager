@@ -36,7 +36,7 @@ fi
 echo "dry run ${dryRun}"
 
 uuid=$(date +%s%N)
-newBranch=raise-version-${newVersion}-${uuid}
+newBranch=raise-portal-version-${newVersion}-${uuid}
 
 # switch to directory of this script
 cd "$(dirname "$0")"
@@ -45,25 +45,14 @@ source "../raiseRepo.sh"
 
 function raiseVersionOfOurRepos {
   repos=(
-    "git@github.com:axonivy-market/demo-projects.git"
-    "git@github.com:axonivy/glsp-editor-client.git"
-    "git@github.com:axonivy/branding-images.git"
-    "git@github.com:axonivy/doc-images.git"
-    "git@github.com:axonivy/case-map-ui.git"
-    "git@github.com:axonivy/primefaces-themes.git"
-    "git@github.com:axonivy/engine-cockpit.git"
-    "git@github.com:axonivy/dev-workflow-ui.git"
-    "git@github.com:axonivy/webeditor.git"
-    "git@github.com:axonivy/rules.git"
-    "git@github.com:axonivy/process-editor-core.git"
     "git@github.com:axonivy/core.git"
   )
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 
 function updateSingleRepo {
-  ./.ivy/raise-version.sh ${newVersion}
-  git commit -a -m "Raise version to ${newVersion}"
+  ./.ivy/raise-portal-version.sh ${newVersion}
+  git commit -a -m "Raise portal version to ${newVersion}"
 }
 
 raiseVersionOfOurRepos
