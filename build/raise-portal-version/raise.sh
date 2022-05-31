@@ -20,16 +20,23 @@ if [ $# -eq 1 ]; then
   echo "Parameter source branch required"
   exit
 fi
+if [ $# -eq 2 ]; then
+  echo "Parameter tokenFile required"
+  exit
+fi
 
 newVersion=$1
 echo "raise version to ${newVersion}"
 
 sourceBranch=$2
-echo "source branch to checkout repos $2"
+echo "source branch to checkout repos ${sourceBranch}"
+
+tokenFile=$3
+echo "token file to auth for gh cli ${tokenFile}"
 
 dryRun=0
-if [ $# -eq 3 ]; then
-  if [ $3 = "--dry-run" ]; then
+if [ $# -eq 4 ]; then
+  if [ $4 = "--dry-run" ]; then
     dryRun=1
   fi
 fi

@@ -8,9 +8,12 @@ if [ ! -z "$1" ]; then
   engineUrl=$1
 fi
 
+tokenFile=$3
+echo "token file to auth for gh cli ${tokenFile}"
+
 dryRun=0
-if [ $# -eq 2 ]; then
-  if [ $2 = "--dry-run" ]; then
+if [ $# -eq 3 ]; then
+  if [ $3 = "--dry-run" ]; then
     dryRun=1
   fi
 fi
