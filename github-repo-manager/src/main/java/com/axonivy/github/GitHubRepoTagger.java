@@ -23,43 +23,11 @@ public class GitHubRepoTagger {
       List<String> repos = new ArrayList<String>();
 
       if ("release/7.0".equals(branch)) {
-        repos = List.of("core-7", "ulc-ria", "admin-ui", "rules", "maven-plugins", "webeditor");
+        repos = GitHubRepos.REPOS7;
       } else if ("release/8.0".equals(branch)) {
-        repos = List.of(
-                "glsp-editor-client",
-                "rules",
-                "engine-cockpit",
-                "maven-plugins",
-                "webeditor",
-                "core",
-                "primefaces-themes",
-                "ws-axis",
-                "case-map-ui",
-                "thirdparty-libs",
-                "p2-targetplatform",
-                "doc-images",
-                "engine-launchers",
-                "core-icons");
+        repos = GitHubRepos.REPOS8;
       } else {
-        // release/9.3 and upcoming
-        repos = List.of(
-                "glsp-editor-client",
-                "rules",
-                "engine-cockpit",
-                "maven-plugins",
-                "dev-workflow-ui",
-                "webeditor",
-                "core",
-                "primefaces-themes",
-                "process-editor-core",
-                "ws-axis",
-                "case-map-ui",
-                "thirdparty-libs",
-                "p2-targetplatform",
-                "doc-images",
-                "engine-launchers",
-                "core-icons",
-                "branding-images");
+        repos = GitHubRepos.REPOS;
       }
 
       for (var repo : repos) {
