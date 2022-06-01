@@ -1,11 +1,8 @@
-package com.aoxnivy.github;
+package com.axonivy.github;
 
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
-
-import com.axonivy.github.GitHubProvider;
-import com.axonivy.github.GitHubRepoTagger;
 
 class TestGitHubRepoTagger {
 

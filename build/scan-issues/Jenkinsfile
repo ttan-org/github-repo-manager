@@ -11,7 +11,7 @@ pipeline {
   }
 
   parameters {
-    string name: 'version', defaultValue: "8.0.27", description: 'Since version to list issues'
+    string name: 'version', defaultValue: "8.0.25", description: 'Since version to list issues e.g. 8.0.25'
   }
 
   triggers {
@@ -22,12 +22,16 @@ pipeline {
     stage('build') {
       steps {
         script {
+          def reportFile = "${WORKSPACE}/report.html"
+
           withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
             maven cmd: "-f github-repo-manager clean compile exec:java " +
                        "-DGITHUB.TOKEN.FILE=${tokenFile} " + 
                        "-Dexec.mainClass=\"com.axonivy.github.GitHubIssueScanner\" " + 
-                       "-Dexec.args=\"${params.version}\""
+                       "-Dexec.args=\"${params.version} ${reportFile}\""
           }
+          archiveArtifacts artifacts: "report.html"
+          currentBuild.description = "<a href='${BUILD_URL}artifact/report.html'>Scan Issue Report ${params.version}</a>"
         }
       }
     }

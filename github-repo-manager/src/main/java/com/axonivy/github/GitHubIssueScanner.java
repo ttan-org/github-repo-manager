@@ -1,6 +1,7 @@
 package com.axonivy.github;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,46 +11,50 @@ import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHRepository;
 
+import com.axonivy.github.scan.ScanIssueReporter;
+
 public class GitHubIssueScanner {
 
   public static void main(String[] args) throws IOException {
     var input = args[0];// "8.0.25";
+    var outputFile = args[1];
 
     if (StringUtils.isEmpty(input)) {
       throw new IllegalArgumentException("version not set");
     }
 
-    System.out.println("Start scanning issues ...");
+    var reporter = new ScanIssueReporter(Paths.get(outputFile));
+    reporter.print("Start scanning issues ...");
     var github = GitHubProvider.get();
     var tagName = "v" + input;
     var branchName = "release/" + StringUtils.left(input, 3);
     var issues = new HashSet<String>();
     for (var repoName : GitHubRepos.repos(input)) {
       var repo = github.getRepository("axonivy/" + repoName);
-      System.out.println(repo.getFullName() + ": Start scanning");
 
+      reporter.setRepo(repo);
+      reporter.print("Start scanning");
       var since = findSince(repo, tagName);
       if (since == null) {
-        System.out.println(repo.getFullName() + ": Skipping repo because there is no tag " + tagName);
+        reporter.print("Skipping repo because there is no tag " + tagName);
         continue;
       }
 
       var until = findUntil(repo, branchName);
       if (until == null) {
-        System.out.println(repo.getFullName() + ": Skipping repo because there is no branch " + branchName);
+        reporter.print("Skipping repo because there is no branch " + branchName);
         continue;
       }
 
       var issuesFound = collectIssues(repo, branchName, since, until);
       if (issuesFound.isEmpty()) {
-        System.out.println(repo.getFullName() + ": No issues found");
+        reporter.print("No issues found");
       } else {
-        System.out.println(repo.getFullName() + ": Found " + issuesFound.size() + " issues " + issuesFound.stream().collect(Collectors.joining(", ", "[", "]")));
+        reporter.print("Found " + issuesFound.size() + " issues " + issuesFound.stream().collect(Collectors.joining(", ", "[", "]")));
       }
       issues.addAll(issuesFound);
     }
-
-    printReport(tagName, issues);
+    reporter.report(tagName, issues);
   }
 
   private static Set<String> collectIssues(GHRepository repo, String branchName, Date since, Date until) throws IOException {
@@ -75,7 +80,8 @@ public class GitHubIssueScanner {
       if (!tagName.equals(tag.getName())) {
         continue;
       }
-      return tag.getCommit().getCommitDate();
+      var time =  tag.getCommit().getCommitDate().getTime();
+      return new Date(time + 1000); // add one second to have not the commit of this tag itself
     }
     return null;
   }
@@ -88,22 +94,5 @@ public class GitHubIssueScanner {
     var branch = repo.getBranch(branchName);
     var sha1 = branch.getSHA1();
     return repo.getCommit(sha1).getCommitDate();
-  }
-
-  private static void printReport(String tag, HashSet<String> issues) {
-    System.out.println("");
-    System.out.println("==================================================");
-    System.out.println("Issues Report");
-    System.out.println("==================================================");
-    if (issues.isEmpty()) {
-      System.out.println("Found no issues since tag " + tag);
-    } else {
-      System.out.println("Found " + issues.size() + " issues since tag " + tag);
-      System.out.println("--------------------------------------------------");
-      for (var issue : issues) {
-        System.out.println(issue);
-      }
-    }
-    System.out.println("==================================================");
   }
 }
