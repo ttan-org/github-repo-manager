@@ -16,7 +16,6 @@ public interface GitHubRepos {
   List<String> REPOS7 = List.of("core-7", "ulc-ria", "admin-ui", "rules", "maven-plugins", "webeditor");
 
   List<String> REPOS8 = List.of(
-          "glsp-editor-client",
           "rules",
           "engine-cockpit",
           "maven-plugins",
