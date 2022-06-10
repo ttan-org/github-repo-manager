@@ -21,7 +21,7 @@ echo "dry run: ${dryRun}"
 
 # do not convert these projects:
 declare -A exclusions=( 
-  ["ivy-core.git"]="doc/screenshots/designer/screenshots/additionalProjects/oldVersionProject" 
+  ["core.git"]="doc/screenshots/designer/screenshots/additionalProjects/oldVersionProject" 
 )
 
 workDir=$(mktemp -d -t projectConvertXXX)
