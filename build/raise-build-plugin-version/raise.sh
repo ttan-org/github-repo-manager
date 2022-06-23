@@ -77,7 +77,6 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/engine-cockpit.git"
     "git@github.com:axonivy/dev-workflow-ui.git"
     "git@github.com:axonivy/core"
-    "git@github.com:axonivy-market/doc-factory.git"
   )
 
   message="Raising project-build-plugin version to ${releaseVersion} / ${snapshotVersion}"
