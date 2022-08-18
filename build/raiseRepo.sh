@@ -26,7 +26,8 @@ function runRepoUpdate {
     git clone -q "${repo}" "${cloneDir}"
 
     cd "${cloneDir}"
-    git checkout -q -b "${newBranch}" "${sourceBranch}"
+    git checkout "${sourceBranch}"
+    git checkout -q -b "${newBranch}" 
 
     ${updateAction}
 
