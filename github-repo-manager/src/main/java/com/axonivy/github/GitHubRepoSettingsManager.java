@@ -10,50 +10,53 @@ public class GitHubRepoSettingsManager {
 
   public static void main(String[] args) throws IOException {
     var github = GitHubProvider.get();
+
     var org = github.getOrganization("axonivy");
     var repos = List.copyOf(org.getRepositories().values());
     for (var repo : repos) {
-      new RepoConfigurator(repo).run();
+      if (repo.isArchived()) {
+        continue;
+      }
+      new RepoConfigurator(repo)
+              .deleteHeadBranchOnMerge()
+              .disableProjects()
+              .disableIssues()
+              .disableWiki()
+              .deleteHooks()
+              .protectBranches();
+    }
+
+    org = github.getOrganization("axonivy-market");
+    repos = List.copyOf(org.getRepositories().values());
+    for (var repo : repos) {
+      if (repo.isArchived()) {
+        continue;
+      }
+      new RepoConfigurator(repo)
+              .deleteHeadBranchOnMerge()
+              .disableProjects()
+              .deleteHooks()
+              .protectBranches();
     }
   }
 
-  private static class RepoConfigurator {
-
+  public static class RepoConfigurator {
     private final GHRepository repo;
 
-    private RepoConfigurator(GHRepository repo) {
+    public RepoConfigurator(GHRepository repo) {
       this.repo = repo;
     }
 
-    private void run() throws IOException {
-      if (repo.isArchived()) {
-        return;
-      }
-
+    RepoConfigurator deleteHeadBranchOnMerge() {
       // bug: always returns false
       if (!repo.isDeleteBranchOnMerge()) {
         log("delete branch on merge");
         //repo.deleteBranchOnMerge(true);
       }
-      if (repo.hasProjects()) {
-        log("disable projects");
-        repo.enableProjects(false);
-      }
-      if (repo.hasIssues()) {
-        log("disable issues");
-        repo.enableIssueTracker(false);
-      }
-      if (repo.hasWiki()) {
-        log("disable wiki");
-        repo.enableWiki(false);
-      }
+      return this;
+    }
 
-      for (var hook : repo.getHooks()) {
-        log("delete hook " + hook.getUrl());
-        hook.delete();
-      }
-
-      // patterns are not possible at the moment
+    RepoConfigurator protectBranches() throws IOException {
       for (var branch : repo.getBranches().values()) {
         if (!branch.getName().equals("master") && !branch.getName().startsWith("release/")) {
           continue;
@@ -67,6 +70,39 @@ public class GitHubRepoSettingsManager {
                   .enable();
         }
       }
+      return this;
+    }
+
+    RepoConfigurator deleteHooks() throws IOException {
+      for (var hook : repo.getHooks()) {
+        log("delete hook " + hook.getUrl());
+        hook.delete();
+      }
+      return this;
+    }
+
+    RepoConfigurator disableWiki() throws IOException {
+      if (repo.hasWiki()) {
+        log("disable wiki");
+        repo.enableWiki(false);
+      }
+      return this;
+    }
+
+    RepoConfigurator disableIssues() throws IOException {
+      if (repo.hasIssues()) {
+        log("disable issues");
+        repo.enableIssueTracker(false);
+      }
+      return this;
+    }
+
+    RepoConfigurator disableProjects() throws IOException {
+      if (repo.hasProjects()) {
+        log("disable projects");
+        repo.enableProjects(false);
+      }
+      return this;
     }
 
     private boolean isProtected(GHBranch branch) throws IOException {
