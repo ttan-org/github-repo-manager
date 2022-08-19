@@ -4,3 +4,5 @@ updates:
     directory: github-repo-manager
     schedule:
       interval: daily
+    assignees:
+      - alexsuter
