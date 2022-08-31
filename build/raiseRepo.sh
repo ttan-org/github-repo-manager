@@ -32,7 +32,7 @@ function runRepoUpdate {
     ${updateAction}
 
     if [ "$dryRun" = "0" ]; then      
-      git push -u origin "${newBranch}"
+      git push -q -u origin "${newBranch}"
 
       gh auth login --with-token < ${tokenFile}
       gh pr create --title "${message}" --body "${message}" --base ${sourceBranch}
