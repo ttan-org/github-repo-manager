@@ -103,4 +103,6 @@ withLog() { # log to file and stdout (treasure logs in order to review/archive t
 
 downloadEngine
 withLog updateProjectRepos
+# because git writes on stderr
+sed '/^remote/d' "${DIR}/conversionError.txt" > "${DIR}/conversionError.txt"
 clean
