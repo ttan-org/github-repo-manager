@@ -16,20 +16,30 @@ import com.axonivy.github.scan.ScanIssueReporter;
 public class GitHubIssueScanner {
 
   public static void main(String[] args) throws IOException {
-    var input = args[0];// "8.0.25";
+    if (args.length < 2 || args.length > 3) {
+      throw new IllegalArgumentException("Wrong number of params (2-3) got " +args.length+": version [branch] outputFile");
+    }
+    var version = args[0];// "8.0.25";
+    var branchName = "";
     var outputFile = args[1];
+    if (args.length == 3) {
+      branchName = args[1];
+      outputFile = args[2];
+    }
 
-    if (StringUtils.isEmpty(input)) {
+    if (StringUtils.isEmpty(version)) {
       throw new IllegalArgumentException("version not set");
     }
 
     var reporter = new ScanIssueReporter(Paths.get(outputFile));
     reporter.print("Start scanning issues ...");
     var github = GitHubProvider.get();
-    var tagName = "v" + input;
-    var branchName = "release/" + StringUtils.left(input, 3);
+    var tagName = "v" + version;
+    if (StringUtils.isBlank(branchName)) {
+      branchName = "release/" + StringUtils.left(version, 3);
+    }
     var issues = new HashSet<String>();
-    for (var repoName : GitHubRepos.repos(input)) {
+    for (var repoName : GitHubRepos.repos(version)) {
       var repo = github.getRepository("axonivy/" + repoName);
 
       reporter.setRepo(repo);
