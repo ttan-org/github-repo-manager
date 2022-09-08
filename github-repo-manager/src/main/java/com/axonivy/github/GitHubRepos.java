@@ -31,7 +31,7 @@ public interface GitHubRepos {
           "core-icons");
 
   List<String> REPOS = List.of(
-          "glsp-editor-client",
+          "process-editor-client",
           "rules",
           "engine-cockpit",
           "maven-plugins",
@@ -40,12 +40,12 @@ public interface GitHubRepos {
           "core",
           "primefaces-themes",
           "process-editor-core",
-          "ws-axis",
-          "case-map-ui",
-          "thirdparty-libs",
-          "p2-targetplatform",
           "doc-images",
+          "case-map-ui",    
+          "branding-images",
+                    
+          "thirdparty-libs",          
+          "p2-targetplatform",          
           "engine-launchers",
-          "core-icons",
-          "branding-images");
+          "core-icons");
 }
