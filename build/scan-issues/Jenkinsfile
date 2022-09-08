@@ -12,6 +12,7 @@ pipeline {
 
   parameters {
     string name: 'version', defaultValue: "8.0.25", description: 'Since version to list issues e.g. 8.0.25'
+    string name: 'branch', defaultValue: "", description: 'On which branch to scan. e.g master. If not defined, the release branch of the given version is used.'
   }
 
   triggers {
@@ -28,7 +29,7 @@ pipeline {
             maven cmd: "-f github-repo-manager clean compile exec:java " +
                        "-DGITHUB.TOKEN.FILE=${tokenFile} " + 
                        "-Dexec.mainClass=\"com.axonivy.github.GitHubIssueScanner\" " + 
-                       "-Dexec.args=\"${params.version} ${reportFile}\""
+                       "-Dexec.args=\"${params.version} ${params.branch} ${reportFile}\""
           }
           archiveArtifacts artifacts: "report.html"
           currentBuild.description = "<a href='${BUILD_URL}artifact/report.html'>Scan Issue Report ${params.version}</a>"
