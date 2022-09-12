@@ -43,8 +43,8 @@ public interface GitHubRepos {
           "doc-images",
           "case-map-ui",    
           "branding-images",
-                    
-          "thirdparty-libs",          
+          "thirdparty-libs",
+       
           "p2-targetplatform",          
           "engine-launchers",
           "core-icons");
