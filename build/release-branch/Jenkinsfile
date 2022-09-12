@@ -1,0 +1,37 @@
+pipeline {
+  agent {
+    dockerfile {
+      dir 'build'
+    }
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    disableConcurrentBuilds()
+  }
+
+  triggers {
+    cron '@midnight'
+  }
+
+  parameters {
+    booleanParam name: 'dryRun', defaultValue: true, description: 'Whether the build should really make a change or not'
+    string(name: 'minorVersion', defaultValue: '10.0', description: 'Minor version e.g. 10.0, 11.1')
+  }
+
+  stages {
+    stage('build') {
+      steps {
+        script {
+          withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
+            maven cmd: "-f github-repo-manager clean compile exec:java " + 
+                       "-DDRY_RUN=${dryRun} " +
+                       "-DGITHUB.TOKEN.FILE=${tokenFile} " +
+                       "-Dexec.mainClass=\"com.axonivy.github.GitHubBrancher\" " +
+                       "-Dexec.args=\"${params.minorVersion}\""
+          }
+        }
+      }
+    }
+  }
+}
