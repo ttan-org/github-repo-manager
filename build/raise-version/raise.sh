@@ -60,6 +60,7 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/rules.git"
     "git@github.com:axonivy/process-editor-core.git"
     "git@github.com:axonivy/core.git"
+    "git@github.com:axonivy/thirdparty-libs.git"
   )
   message="Raise version to ${newVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
