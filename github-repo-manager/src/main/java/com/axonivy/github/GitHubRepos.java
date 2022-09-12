@@ -1,8 +1,9 @@
 package com.axonivy.github;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface GitHubRepos {
+public class GitHubRepos {
 
   public static List<String> repos(String version) {
     if (version.startsWith("7")) {
@@ -13,9 +14,9 @@ public interface GitHubRepos {
     return REPOS;
   }
 
-  List<String> REPOS7 = List.of("core-7", "ulc-ria", "admin-ui", "rules", "maven-plugins", "webeditor");
+  public static final List<String> REPOS7 = List.of("core-7", "ulc-ria", "admin-ui", "rules", "maven-plugins", "webeditor");
 
-  List<String> REPOS8 = List.of(
+  public static final  List<String> REPOS8 = List.of(
           "rules",
           "engine-cockpit",
           "maven-plugins",
@@ -30,7 +31,7 @@ public interface GitHubRepos {
           "engine-launchers",
           "core-icons");
 
-  List<String> REPOS = List.of(
+  public static final  List<String> REPOS_TO_BRANCH = List.of(
           "process-editor-client",
           "rules",
           "engine-cockpit",
@@ -41,11 +42,15 @@ public interface GitHubRepos {
           "primefaces-themes",
           "process-editor-core",
           "doc-images",
-          "case-map-ui",    
+          "case-map-ui",
           "branding-images",
-          "thirdparty-libs",
-       
-          "p2-targetplatform",          
-          "engine-launchers",
-          "core-icons");
+          "thirdparty-libs");
+
+
+  public static final  List<String> REPOS = new ArrayList<>();
+
+  static {
+    REPOS.addAll(REPOS_TO_BRANCH);
+    REPOS.addAll(List.of("p2-targetplatform", "engine-launchers", "core-icons"));
+  }
 }
