@@ -17,8 +17,8 @@ pipeline {
   parameters {
     booleanParam name: 'dryRun', defaultValue: true, description: 'Whether the build should push the changes or not'
     string(name: 'branch', defaultValue: 'master', description: 'Source branch e.g. master, release/8.0')
-    string(name: 'newReleaseVersion', defaultValue: '10.0.0', description: 'New project-build-plugin release version e.g 9.3.0')
-    string(name: 'newSnapshotVersion', defaultValue: '10.0.0-SNAPSHOT', description: 'New project-build-plugin SNAPSHOT version e.g 9.3.1-SNAPSHOT')
+    string(name: 'newReleaseVersion', defaultValue: '20.0.0', description: 'New project-build-plugin release version e.g 9.3.0')
+    string(name: 'newSnapshotVersion', defaultValue: '20.0.1-SNAPSHOT', description: 'New project-build-plugin SNAPSHOT version e.g 9.3.1-SNAPSHOT')1
   }
 
   stages {
