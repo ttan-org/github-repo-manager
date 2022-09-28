@@ -83,8 +83,6 @@ updateProjectRepos() {
   projectRepos=(
     "git@github.com:axonivy/core.git"
     "git@github.com:axonivy-market/demo-projects.git"
-    "git@github.com:axonivy-market/doc-factory.git"
-    "git@github.com:axonivy-market/msgraph-connector.git"
     "git@github.com:axonivy/engine-cockpit.git"
     "git@github.com:axonivy/dev-workflow-ui.git"
   )
