@@ -17,7 +17,8 @@ pipeline {
   parameters {
     booleanParam name: 'dryRun', defaultValue: true, description: 'Whether the build should push the changes or not'
     string(name: 'branch', defaultValue: 'master', description: 'Source branch e.g. master, release/8.0')
-    string(name: 'newReleaseVersion', defaultValue: '10.0.0', description: 'New web-tester release version e.g 9.5.0')
+    string(name: 'newReleaseVersion', defaultValue: '20.0.0', description: 'New web-tester release version e.g 10.0.0')
+    string(name: 'newSnapshotVersion', defaultValue: '20.0.1-SNAPSHOT', description: 'New web-tester SNAPSHOT version e.g 10.0.1-SNAPSHOT')
   }
 
   stages {
@@ -30,7 +31,7 @@ pipeline {
             withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
               sshagent(credentials: ['github-axonivy']) {
                 def dryRunCommand = params.dryRun ? '--dry-run' : ''
-                sh "build/raise-web-tester-version/raise.sh ${params.newReleaseVersion} ${params.branch} ${tokenFile} ${dryRunCommand}"
+                sh "build/raise-web-tester-version/raise.sh ${params.newReleaseVersion} ${params.newSnapshotVersion} ${params.branch} ${tokenFile} ${dryRunCommand}"
               }
             }
           }

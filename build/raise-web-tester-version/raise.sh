@@ -30,15 +30,18 @@ fi
 releaseVersion=$1
 echo "raise release version to ${releaseVersion}"
 
-sourceBranch=$2
+snapshotVersion=$2
+echo "raise snapshot version to ${snapshotVersion}"
+
+sourceBranch=$3
 echo "source branch to checkout repos ${sourceBranch}"
 
-tokenFile=$3
+tokenFile=$4
 echo "token file to auth for gh cli ${tokenFile}"
 
 dryRun=0
-if [ $# -eq 4 ]; then
-  if [ $4 = "--dry-run" ]; then
+if [ $# -eq 5 ]; then
+  if [ $5 = "--dry-run" ]; then
     dryRun=1
   fi
 fi
@@ -62,6 +65,10 @@ function raiseVersionOfOurRepos {
 
   repos=(
     "git@github.com:axonivy/core"
+    "git@github.com:axonivy/engine-cockpit"
+    "git@github.com:axonivy/dev-workflow-ui"
+    "git@github.com:axonivy/project-build-examples"
+    "git@github.com:axonivy-market/demo-projects"
   )
 
   message="Raising web-tester version to ${releaseVersion}"
