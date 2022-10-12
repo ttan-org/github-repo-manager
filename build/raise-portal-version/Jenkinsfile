@@ -16,7 +16,7 @@ pipeline {
   
   parameters {
     booleanParam name: 'dryRun', defaultValue: true, description: 'whether the build should push the changes or not'
-    string(name: 'newVersion', defaultValue: '10.0.0', description: 'New portal version')
+    string(name: 'newVersion', defaultValue: '20.0.0', description: 'New portal version')
     string(name: 'branch', defaultValue: 'master', description: 'Branch to choose e.g. master, release/8.0')
   }
 
