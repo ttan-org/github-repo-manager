@@ -23,7 +23,7 @@ public class GitHubRepoSettingsManager {
               .disableIssues()
               .disableWiki()
               .deleteHooks()
-              .protectBranches();
+              .protectBranches(true);
     }
 
     org = github.getOrganization("axonivy-market");
@@ -36,7 +36,7 @@ public class GitHubRepoSettingsManager {
               .deleteHeadBranchOnMerge()
               .disableProjects()
               .deleteHooks()
-              .protectBranches();
+              .protectBranches(false);
     }
   }
 
@@ -56,7 +56,13 @@ public class GitHubRepoSettingsManager {
       return this;
     }
 
-    RepoConfigurator protectBranches() throws IOException {
+    RepoConfigurator protectBranches(boolean orgWithPlan) throws IOException {
+      if (repo.isPrivate() && !orgWithPlan) {
+        // can't use branch protection feature in org with no plan and private repo
+        log("can't protect private repo in org with no plan");
+        return this;
+      }
+
       for (var branch : repo.getBranches().values()) {
         if (!branch.getName().equals("master") && !branch.getName().startsWith("release/")) {
           continue;
