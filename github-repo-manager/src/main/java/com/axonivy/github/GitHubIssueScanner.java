@@ -36,7 +36,7 @@ public class GitHubIssueScanner {
     var github = GitHubProvider.get();
     var tagName = "v" + version;
     if (StringUtils.isBlank(branchName)) {
-      branchName = "release/" + StringUtils.left(version, 3);
+      branchName = "release/" + StringUtils.substringBeforeLast(version, ".");
     }
     var issues = new HashSet<String>();
     for (var repoName : GitHubRepos.repos(version)) {
