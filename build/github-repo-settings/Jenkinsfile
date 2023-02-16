@@ -11,7 +11,7 @@ pipeline {
   }
 
   parameters {
-    booleanParam name: 'dryRun', defaultValue: true, description: 'Whether the build should really make a change or not'
+    booleanParam name: 'dryRun', defaultValue: false, description: 'Whether the build should really make a change or not'
   }
 
   triggers {
