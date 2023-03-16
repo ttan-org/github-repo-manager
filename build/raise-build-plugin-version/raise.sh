@@ -77,6 +77,7 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/engine-cockpit.git"
     "git@github.com:axonivy/dev-workflow-ui.git"
     "git@github.com:axonivy/process-editor-client.git"
+    "git@github.com:axonivy/next-gen-inscription.git"
     "git@github.com:axonivy/cluster-tests.git"
     "git@github.com:axonivy/core"
   )
