@@ -49,7 +49,6 @@ source "../raiseRepo.sh"
 function raiseVersionOfOurRepos {
   repos=(
     "git@github.com:axonivy-market/demo-projects.git"
-    "git@github.com:axonivy/glsp-editor-client.git"
     "git@github.com:axonivy/branding-images.git"
     "git@github.com:axonivy/doc-images.git"
     "git@github.com:axonivy/case-map-ui.git"
@@ -58,8 +57,9 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/dev-workflow-ui.git"
     "git@github.com:axonivy/webeditor.git"
     "git@github.com:axonivy/rules.git"
+    "git@github.com:axonivy/process-editor-client.git"
     "git@github.com:axonivy/process-editor-core.git"
-    "git@github.com:axonivy/next-gen-inscription.git"
+    "git@github.com:axonivy/inscription-client.git"
     "git@github.com:axonivy/core.git"
     "git@github.com:axonivy/thirdparty-libs.git"
   )
