@@ -88,7 +88,7 @@ updateProjectRepos() {
     "git@github.com:axonivy/project-build-examples.git"
     "git@github.com:axonivy/cluster-tests.git"
     "git@github.com:axonivy/process-editor-client.git"
-    "git@github.com:axonivy/next-gen-inscription.git"
+    "git@github.com:axonivy/inscription-client.git"
   )
   message="Raise ivy projects to latest version"
   runRepoUpdate 'raiseProjects' "${projectRepos[@]}"
