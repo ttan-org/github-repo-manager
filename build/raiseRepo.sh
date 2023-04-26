@@ -26,6 +26,13 @@ function runRepoUpdate {
     git clone -q "${repo}" "${cloneDir}"
 
     cd "${cloneDir}"
+
+    branchExists=$(git ls-remote --heads origin ${sourceBranch})
+    if [[ -z ${branchExists} ]]; then
+      echo "skipping repository ${repo} because it has no ${sourceBranch} branch"
+      continue
+    fi
+
     git checkout -q "${sourceBranch}"
     git checkout -q -b "${newBranch}" 
 
