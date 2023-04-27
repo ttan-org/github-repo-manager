@@ -45,7 +45,8 @@ public class GitHubRepos {
           "case-map-ui",
           "branding-images",
           "thirdparty-libs",
-          "inscription-client");
+          "inscription-client",
+          "project-build-examples");
 
   public static final  List<String> REPOS = new ArrayList<>();
 
