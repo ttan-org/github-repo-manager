@@ -11,7 +11,8 @@ pipeline {
   }
 
   parameters {
-    string name: 'version', defaultValue: "8.0.25", description: 'Since version to list issues e.g. 8.0.25'
+    string name: 'version', defaultValue: "8.0.33", description: 'Current version to read JIRA issues for e.g., 8.0.33'
+    string name: 'tag', defaultValue: "8.0.32", description: 'From which version (tag) the logs are scanned for issues e.g., 8.0.32'
     string name: 'branch', defaultValue: "", description: 'On which branch to scan. e.g master. If not defined, the release branch of the given version is used.'
   }
 
@@ -26,10 +27,12 @@ pipeline {
           def reportFile = "${WORKSPACE}/report.html"
 
           withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
-            maven cmd: "-f github-repo-manager clean compile exec:java " +
+            maven cmd: "-f github-repo-manager clean process-classes -P ScanIssues " +
                        "-DGITHUB.TOKEN.FILE=${tokenFile} " + 
-                       "-Dexec.mainClass=\"com.axonivy.github.GitHubIssueScanner\" " + 
-                       "-Dexec.args=\"${params.version} ${params.branch} ${reportFile}\""
+                       "-Dtag=\"${params.tag}\" " +
+                       "-Divy-version=\"${params.version}\" " +
+                       "-Dbranch=\"${params.branch}\" " +
+                       "-DreportFile=\"${reportFile}\""
           }
           archiveArtifacts artifacts: "report.html"
           currentBuild.description = "<a href='${BUILD_URL}artifact/report.html'>Scan Issue Report ${params.version}</a>"

@@ -31,4 +31,70 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>nexus.ivyteam.io</id>
+      <url>https://nexus.ivyteam.io/repository/maven/</url>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+  
+  <profiles>
+    <profile>
+      <id>ScanIssues</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>ch.ivyteam.maven</groupId>
+            <artifactId>jira-plugin</artifactId>
+            <version>10.0.2</version>
+            <executions>
+              <execution>
+                <id>generate-release-notest</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>generate-changelog</goal>
+                </goals>
+                <configuration>
+                  <jiraServerId>axonivy.jira</jiraServerId>
+                  <filterBy>project in (XIVY) AND fixVersion = ${ivy-version}</filterBy>
+                  <asciiTemplate>$${key}</asciiTemplate>
+                  <fileset>
+                    <outputDirectory>${project.build.directory}/release-notes</outputDirectory>
+                    <directory>${project.basedir}/src/main/release-notes</directory>
+                  </fileset>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>generate-issue-report</id>
+                <phase>process-classes</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <mainClass>com.axonivy.github.GitHubIssueScanner</mainClass>
+              <arguments>
+                <argument>${tag}</argument>
+                <argument>${branch}</argument>
+                <argument>${project.build.directory}/release-notes/release-notes.txt</argument>
+                <argument>${reportFile}</argument>
+              </arguments>
+            </configuration>         
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

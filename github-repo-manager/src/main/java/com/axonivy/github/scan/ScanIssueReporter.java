@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.kohsuke.github.GHRepository;
 
@@ -23,23 +24,28 @@ public class ScanIssueReporter {
   }
 
   public void print(String message) {
+      var msg = repo == null ? message : "<b>" + repo.getFullName() + "</b>: " + message;
+      msg = msg + "<br />";
+      printHtml(msg);
+  }
+
+  private void printHtml(String msg) {
     try {
       if (!Files.exists(path)) {
         Files.createFile(path);
       }
-      var msg = repo == null ? message : "<b>" + repo.getFullName() + "</b>: " + message;
-      msg = msg + "<br />";
       Files.writeString(path, msg, StandardOpenOption.APPEND);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
   }
 
-  public void report(String tag, Set<String> issues) {
+  public void report(String tag, Set<Issue> logIssues, Set<Issue> rnIssues) {
     repo = null;
 
-    var sortedIssues = issues.stream()
-            .sorted(String.CASE_INSENSITIVE_ORDER)
+    var sortedIssues = Stream.concat(logIssues.stream(), rnIssues.stream())
+            .distinct()
+            .sorted()
             .collect(Collectors.toList());
     print("");
     print("");
@@ -49,9 +55,30 @@ public class ScanIssueReporter {
     } else {
       print("Found " + sortedIssues.size() + " issues since tag " + tag);
       print("--------------------------------------------------");
+      printHtml("<table>");
+      printHtml("<thead><tr><td>Issue</td><td>Log</td><td>Release Notes</td></tr></thead>");
+      printHtml("<tbody>");
       for (var issue : sortedIssues) {
-        print("<a target=\"_blank\" href=\"https://axonivy.atlassian.net/browse/" + issue + "\">" + issue + "</a>");
+        printHtml("<tr>");
+        printHtml("<td><a target=\"_blank\" href=\"https://1ivy.atlassian.net/browse/" + issue + "\">" + issue + "</a></td>");
+        printContains("Log", logIssues, issue);
+        printContains("Release Notes", rnIssues, issue);
+        printHtml("</tr>");
       }
+      printHtml("</tbody>");
+      printHtml("</table>");
     }
+  }
+
+  private void printContains(String kind, Set<Issue> logIssues, Issue issue) {
+    printHtml("<td>");
+    if (logIssues.contains(issue)) {
+      printHtml("<span style=\"color: green;\">");
+      printHtml(kind + " &#x2713;");
+    } else {
+      printHtml("<span style=\"color: red;\">");
+      printHtml(kind +" &#x2715;");
+    }
+    printHtml("<span></td>");
   }
 }

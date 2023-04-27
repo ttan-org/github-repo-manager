@@ -1,6 +1,8 @@
 package com.axonivy.github;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,34 +13,39 @@ import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHRepository;
 
+import com.axonivy.github.scan.Issue;
 import com.axonivy.github.scan.ScanIssueReporter;
 
 public class GitHubIssueScanner {
 
   public static void main(String[] args) throws IOException {
-    if (args.length < 2 || args.length > 3) {
-      throw new IllegalArgumentException("Wrong number of params (2-3) got " +args.length+": version [branch] outputFile");
+    if (args.length != 4) {
+      throw new IllegalArgumentException("Wrong number of params (4) got " +args.length+": tagVersion branch releaseNotesFile outputFile");
     }
-    var version = args[0];// "8.0.25";
-    var branchName = "";
-    var outputFile = args[1];
-    if (args.length == 3) {
-      branchName = args[1];
-      outputFile = args[2];
-    }
+    var tagVersion = args[0];// "8.0.25";
+    var branchName = args[1];
+    var releaseNotesFile = args[2];
+    var outputFile = args[3];
 
-    if (StringUtils.isEmpty(version)) {
+    if (StringUtils.isEmpty(tagVersion)) {
       throw new IllegalArgumentException("version not set");
     }
 
+    var rnIssues = scanReleaseNotesIssues(releaseNotesFile);
+    var tagName = "v" + tagVersion;
     var reporter = new ScanIssueReporter(Paths.get(outputFile));
+    var logIssues = scanLogIssues(tagVersion, branchName, tagName, reporter);
+    reporter.report(tagName, logIssues, rnIssues);
+  }
+
+  private static HashSet<Issue> scanLogIssues(String version, String branchName, String tagName,
+          ScanIssueReporter reporter) throws IOException {
     reporter.print("Start scanning issues ...");
     var github = GitHubProvider.get();
-    var tagName = "v" + version;
     if (StringUtils.isBlank(branchName)) {
       branchName = "release/" + StringUtils.substringBeforeLast(version, ".");
     }
-    var issues = new HashSet<String>();
+    var issues = new HashSet<Issue>();
     for (var repoName : GitHubRepos.repos(version)) {
       var repo = github.getRepository("axonivy/" + repoName);
 
@@ -60,20 +67,28 @@ public class GitHubIssueScanner {
       if (issuesFound.isEmpty()) {
         reporter.print("No issues found");
       } else {
-        reporter.print("Found " + issuesFound.size() + " issues " + issuesFound.stream().collect(Collectors.joining(", ", "[", "]")));
+        var issueList = issuesFound.stream().sorted().map(Issue::toString).collect(Collectors.joining(", ", "[", "]"));
+        reporter.print("Found " + issuesFound.size() + " issues " + issueList);
       }
       issues.addAll(issuesFound);
     }
-    reporter.report(tagName, issues);
+    return issues;
   }
 
-  private static Set<String> collectIssues(GHRepository repo, String branchName, Date since, Date until) throws IOException {
-    var issues = new HashSet<String>();
+  private static Set<Issue> scanReleaseNotesIssues(String releaseNotesFile) throws IOException {
+    return Files.readAllLines(Path.of(releaseNotesFile))
+        .stream()
+        .map(Issue::fromString)
+        .collect(Collectors.toSet());
+  }
+
+  private static Set<Issue> collectIssues(GHRepository repo, String branchName, Date since, Date until) throws IOException {
+    var issues = new HashSet<Issue>();
     for (var commit : repo.queryCommits().from(branchName).since(since).until(until).list()) {
       var title = parseTitle(commit);
       if (title.toLowerCase().startsWith("xivy-")) {
         var issue = StringUtils.substringBefore(title, " ");
-        issues.add(issue);
+        issues.add(Issue.fromString(issue));
       }
     }
     return issues;
