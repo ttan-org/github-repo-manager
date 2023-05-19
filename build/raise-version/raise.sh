@@ -74,7 +74,7 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/vscode-extensions.git"
     "git@github.com:axonivy/theia-ide.git"
   )
-  message="Raise deps version to ${newVersion}"
+  message="Raise dependencies version to ${newVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 
