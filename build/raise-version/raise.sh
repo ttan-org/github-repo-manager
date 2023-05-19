@@ -41,6 +41,12 @@ if [ $# -eq 4 ]; then
 fi
 echo "dry run ${dryRun}"
 
+autoMerge=0
+if [ "$dryRun" = "0" ]; then
+  autoMerge=1
+fi
+echo "autoMerge ${autoMerge}"
+
 uuid=$(date +%s%N)
 newBranch=raise-version-${newVersion}-${uuid}
 
