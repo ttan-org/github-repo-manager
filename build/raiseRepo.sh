@@ -6,6 +6,9 @@ fi
 if [ -z "$dryRun" ]; then
   dryRun=0
 fi
+if [ -z "$autoMerge" ]; then
+  autoMerge=0
+fi
 if [ -z "$sourceBranch" ]; then
   sourceBranch="master"
 fi
@@ -43,6 +46,10 @@ function runRepoUpdate {
 
       gh auth login --with-token < ${tokenFile}
       gh pr create --title "${message}" --body "${message}" --base ${sourceBranch}
+
+      if [ "$autoMerge" = "1" ]; then
+        gh pr merge
+      fi
     fi
 
   done
