@@ -41,7 +41,7 @@ function runRepoUpdate {
 
     ${updateAction}
 
-    if [ "$dryRun" = "0" ]; then      
+    if [ "$dryRun" = "0" ]; then
       git push -q -u origin "${newBranch}"
 
       gh auth login --with-token < ${tokenFile}

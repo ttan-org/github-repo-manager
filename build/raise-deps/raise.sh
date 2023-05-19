@@ -41,12 +41,6 @@ if [ $# -eq 4 ]; then
 fi
 echo "dry run ${dryRun}"
 
-autoMerge=0
-if [ "$dryRun" = "0" ]; then
-  autoMerge=1
-fi
-echo "autoMerge ${autoMerge}"
-
 uuid=$(date +%s%N)
 newBranch=raise-version-${newVersion}-${uuid}
 
@@ -55,32 +49,22 @@ cd "$(dirname "$0")"
 
 source "../raiseRepo.sh"
 
-function raiseVersionOfOurRepos {
+function raiseDepsOfOurRepos {
   repos=(
-    "git@github.com:axonivy-market/demo-projects.git"
-    "git@github.com:axonivy/branding-images.git"
-    "git@github.com:axonivy/doc-images.git"
-    "git@github.com:axonivy/case-map-ui.git"
-    "git@github.com:axonivy/primefaces-themes.git"
-    "git@github.com:axonivy/engine-cockpit.git"
-    "git@github.com:axonivy/dev-workflow-ui.git"
-    "git@github.com:axonivy/webeditor.git"
-    "git@github.com:axonivy/rules.git"
-    "git@github.com:axonivy/process-editor-client.git"
-    "git@github.com:axonivy/process-editor-core.git"
-    "git@github.com:axonivy/inscription-client.git"
     "git@github.com:axonivy/core.git"
-    "git@github.com:axonivy/thirdparty-libs.git"
+    "git@github.com:axonivy/rules.git"
+    "git@github.com:axonivy/webeditor.git"
+    "git@github.com:axonivy/process-editor-core.git"
     "git@github.com:axonivy/vscode-extensions.git"
     "git@github.com:axonivy/theia-ide.git"
   )
-  message="Raise deps version to ${newVersion}"
+  message="Raise version to ${newVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 
 function updateSingleRepo {
-  .ivy/raise-version.sh ${newVersion}
-  git commit -a -m "Raise dependencies version to ${newVersion}"
+  .ivy/raise-deps.sh ${newVersion}
+  git commit -a -m "Raise version to ${newVersion}"
 }
 
-raiseVersionOfOurRepos
+raiseDepsOfOurRepos
