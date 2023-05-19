@@ -74,13 +74,13 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/vscode-extensions.git"
     "git@github.com:axonivy/theia-ide.git"
   )
-  message="Raise dependencies version to ${newVersion}"
+  message="Raise version to ${newVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 
 function updateSingleRepo {
   .ivy/raise-version.sh ${newVersion}
-  git commit -a -m "Raise dependencies version to ${newVersion}"
+  git commit -a -m "Raise version to ${newVersion}"
 }
 
 raiseVersionOfOurRepos
