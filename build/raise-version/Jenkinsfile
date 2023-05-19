@@ -24,6 +24,9 @@ pipeline {
     stage('raise-version') {
       steps {        
         script {
+          if (!dryRun) {
+            mvn cmd: "-f build/new-jira-version/pom.xml initialize -DnewJiraVersion=${newVersion}"
+          }
           sh "git config --global user.name 'ivy-team'"
           sh "git config --global user.email 'info@ivyteam.ch'"
           withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no']) {

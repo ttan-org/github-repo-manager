@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.axonivy.github</groupId>
+  <artifactId>new-jira-version</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>nexus.ivyteam.io</id>
+      <url>https://nexus.ivyteam.io/repository/maven/</url>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>ch.ivyteam.maven</groupId>
+        <artifactId>jira-plugin</artifactId>
+        <version>10.0.3</version>
+        <executions>
+          <execution>
+            <id>replace-changelog-tokens</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>jira-newVersion</goal>
+            </goals>
+            <configuration>
+              <jiraServerId>axonivy.jira</jiraServerId>
+              <afterVersion>${project.version}</afterVersion>
+              <newVersion>${newJiraVersion}</newVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>    
+    </plugins>
+  </build>
+</project>
