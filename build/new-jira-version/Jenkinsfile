@@ -1,0 +1,30 @@
+pipeline {
+  agent {
+    dockerfile {
+      dir 'build'
+    }
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    disableConcurrentBuilds()
+  }
+
+  triggers {
+    cron '@midnight'
+  }
+
+  parameters {
+    string(name: 'newJiraVersion', defaultValue: '12.0.0', description: 'New Jira Version e.g 9.3.0')
+  }
+
+  stages {
+    stage('build') {
+      steps {
+        script {
+          mvn cmd: "-f build/new-jira-version/pom.xml initialize -DnewJiraVersion=${newJiraVersion}"
+        }
+      }      
+    }
+  }
+}
