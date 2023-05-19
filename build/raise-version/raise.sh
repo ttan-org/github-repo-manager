@@ -8,7 +8,10 @@ set -e
 # Param 2: Source Branch (required)
 #   e.g.: master or release/8.0
 #
-# Param 3: dry run (optional)
+# Param 3: Token File for auth of gh cli (required)
+#   e.g.: ~/.gh-token-file
+#
+# Param 4: dry run (optional)
 #   e.g.: --dry-run
 #
 
