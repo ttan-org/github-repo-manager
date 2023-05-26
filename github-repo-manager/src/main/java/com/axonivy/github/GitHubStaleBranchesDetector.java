@@ -3,9 +3,20 @@ package com.axonivy.github;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GitHubStaleBranchesDetector {
+
+  private static Set<String> IGNORE_BRANCHES = Set.of(
+          "master",
+          "gh-pages",
+          "dev10.0",
+          "dev11.1",
+          "release/",
+          "stale/",
+          "dependabot/"
+  );
 
   public static void main(String[] args) throws IOException {
     var github = GitHubProvider.get();
@@ -23,25 +34,9 @@ public class GitHubStaleBranchesDetector {
       }
 
       for (var branch : repo.getBranches().values()) {
-        if ("master".equals(branch.getName())) {
-          continue;
-        }
-        if ("gh-pages".equals(branch.getName())) {
-          continue;
-        }
-        if ("dev10.0".equals(branch.getName())) {
-          continue;
-        }
-        if ("dev11.1".equals(branch.getName())) {
-          continue;
-        }
-        if (branch.getName().startsWith("release/")) {
-          continue;
-        }
-        if (branch.getName().startsWith("stale/")) {
-          continue;
-        }
-        if (branch.getName().startsWith("dependabot/")) {
+        var ignore = IGNORE_BRANCHES.stream()
+          .anyMatch(b -> branch.getName().startsWith(b));
+        if (ignore) {
           continue;
         }
         var lastCommit = repo.getCommit(branch.getSHA1());
