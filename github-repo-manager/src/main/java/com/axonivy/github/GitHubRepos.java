@@ -35,7 +35,6 @@ public class GitHubRepos {
           "process-editor-client",
           "rules",
           "engine-cockpit",
-          "maven-plugins",
           "dev-workflow-ui",
           "webeditor",
           "core",
