@@ -1,8 +1,0 @@
-version: 2
-updates:
-  - package-ecosystem: maven
-    directory: github-repo-manager
-    schedule:
-      interval: daily
-    assignees:
-      - alexsuter
