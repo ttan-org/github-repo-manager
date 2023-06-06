@@ -35,6 +35,7 @@ public class GitHubRepoSettingsManager {
       new RepoConfigurator(repo)
               .deleteHeadBranchOnMerge()
               .disableProjects()
+              .enableIssues()
               .deleteHooks()
               .protectBranches(false);
     }
@@ -47,12 +48,12 @@ public class GitHubRepoSettingsManager {
       this.repo = repo;
     }
 
-    RepoConfigurator deleteHeadBranchOnMerge() {
+    RepoConfigurator deleteHeadBranchOnMerge() throws IOException {
       // bug: always returns false
-      if (!repo.isDeleteBranchOnMerge()) {
+      //if (!repo.isDeleteBranchOnMerge()) {
         log("delete branch on merge");
-        //repo.deleteBranchOnMerge(true);
-      }
+        repo.deleteBranchOnMerge(true);
+      //}
       return this;
     }
 
@@ -99,6 +100,14 @@ public class GitHubRepoSettingsManager {
       if (repo.hasIssues()) {
         log("disable issues");
         repo.enableIssueTracker(false);
+      }
+      return this;
+    }
+
+    RepoConfigurator enableIssues() throws IOException {
+      if (!repo.hasIssues()) {
+        log("enable issues");
+        repo.enableIssueTracker(true);
       }
       return this;
     }
