@@ -20,34 +20,37 @@ public class GitHubStaleBranchesDetector {
 
   public static void main(String[] args) throws IOException {
     var github = GitHubProvider.get();
-    var org = github.getOrganization("axonivy");
-    var repos = List.copyOf(org.getRepositories().values());
 
     var lines = new ArrayList<LastCommit>();
 
-    for (var repo : repos) {
-      if (repo.isArchived()) {
-        continue;
-      }
-      if ("xivy-3.9".equals(repo.getName())) {
-        continue;
-      }
+    for (var r : List.of("axonivy", "axonivy-market")) {
+      var org = github.getOrganization(r);
+      var repos = List.copyOf(org.getRepositories().values());
 
-      for (var branch : repo.getBranches().values()) {
-        var ignore = IGNORE_BRANCHES.stream()
-          .anyMatch(b -> branch.getName().startsWith(b));
-        if (ignore) {
+      for (var repo : repos) {
+        if (repo.isArchived()) {
           continue;
         }
-        var lastCommit = repo.getCommit(branch.getSHA1());
-        var author = lastCommit.getAuthor();
-        var authorName = "?";
-        if (author != null) {
-          authorName = author.getLogin();
+        if ("xivy-3.9".equals(repo.getName())) {
+          continue;
         }
 
-        var line = new LastCommit(repo.getName(), branch.getName(), authorName);
-        lines.add(line);
+        for (var branch : repo.getBranches().values()) {
+          var ignore = IGNORE_BRANCHES.stream()
+            .anyMatch(b -> branch.getName().startsWith(b));
+          if (ignore) {
+            continue;
+          }
+          var lastCommit = repo.getCommit(branch.getSHA1());
+          var author = lastCommit.getAuthor();
+          var authorName = "?";
+          if (author != null) {
+            authorName = author.getLogin();
+          }
+
+          var line = new LastCommit(r, repo.getName(), branch.getName(), authorName);
+          lines.add(line);
+        }
       }
     }
 
@@ -57,13 +60,13 @@ public class GitHubStaleBranchesDetector {
     for (var entry : group.entrySet()) {
       System.out.println(entry.getKey());
       for (var commit : entry.getValue()) {
-        System.out.println("https://github.com/axonivy/" + commit.repo + "/tree/" + commit.branch);
+        System.out.println("https://github.com/" + commit.org + "/" + commit.repo + "/tree/" + commit.branch);
       }
       System.out.println();
     }
   }
 
-  public record LastCommit(String repo, String branch, String author) {
+  public record LastCommit(String org, String repo, String branch, String author) {
 
     public String author() {
       return author == null ? "?" : author;
