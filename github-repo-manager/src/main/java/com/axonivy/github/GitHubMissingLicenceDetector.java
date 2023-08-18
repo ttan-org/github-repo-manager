@@ -41,6 +41,8 @@ public class GitHubMissingLicenceDetector {
       }
     }
     if (missingLicense) {
+      System.err.println("At least one repository has no license.");
+      System.err.println("Add a license manually or run the build without DRYRUN to add Apache 2.0 license to the repository.");
       System.exit(-1);
     }
     System.exit(0);
