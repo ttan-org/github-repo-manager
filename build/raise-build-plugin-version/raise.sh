@@ -77,6 +77,7 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/project-build-examples.git"
     "git@github.com:axonivy/performance-tests.git"
     "git@github.com:axonivy/primefaces-themes.git"
+    "git@github.com:axonivy/web-tester.git"
     "git@github.com:axonivy/engine-cockpit.git"
     "git@github.com:axonivy/dev-workflow-ui.git"
     "git@github.com:axonivy/process-editor-client.git"
