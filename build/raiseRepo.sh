@@ -48,7 +48,7 @@ function runRepoUpdate {
       gh pr create --title "${message}" --body "${message}" --base ${sourceBranch}
 
       if [ "$autoMerge" = "1" ]; then
-        gh pr merge
+        gh pr merge --merge
       fi
     fi
 
