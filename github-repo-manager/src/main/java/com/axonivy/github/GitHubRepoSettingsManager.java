@@ -51,6 +51,7 @@ public class GitHubRepoSettingsManager {
 
     RepoConfigurator deleteHeadBranchOnMerge() throws IOException {
       if (!repo.isDeleteBranchOnMerge()) {
+        log("delete banch on merge");
         repo.deleteBranchOnMerge(true);
       }
       return this;
