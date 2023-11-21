@@ -9,14 +9,7 @@ import org.kohsuke.github.GHRepository;
 public class GitHubRepoSettingsManager {
 
   public static void main(String[] args) throws IOException {
-    var github = GitHubProvider.get();
-
-    var org = github.getOrganization("axonivy");
-    var repos = List.copyOf(org.getRepositories().values());
-    for (var repo : repos) {
-      if (repo.isArchived()) {
-        continue;
-      }
+    for (var repo : reposFor("axonivy")) {
       new RepoConfigurator(repo)
               .deleteHeadBranchOnMerge()
               .disableProjects()
@@ -25,13 +18,7 @@ public class GitHubRepoSettingsManager {
               .deleteHooks()
               .protectBranches(true);
     }
-
-    org = github.getOrganization("axonivy-market");
-    repos = List.copyOf(org.getRepositories().values());
-    for (var repo : repos) {
-      if (repo.isArchived()) {
-        continue;
-      }
+    for (var repo : reposFor("axonivy-market")) {
       new RepoConfigurator(repo)
               .deleteHeadBranchOnMerge()
               .disableProjects()
@@ -39,6 +26,20 @@ public class GitHubRepoSettingsManager {
               .deleteHooks()
               .protectBranches(false);
     }
+  }
+
+  private static List<GHRepository> reposFor(String orgName) throws IOException {
+    var org = GitHubProvider.get().getOrganization(orgName);
+    return List.copyOf(org.getRepositories().values()).stream()
+            .filter(r -> !r.isArchived())
+            .map(r -> {
+              try {
+                return org.getRepository(r.getName()); // need to load the repo once again, because isDeleteBranchOnMerge is not loaded when loading all repos from org
+              } catch (IOException ex) {
+                throw new RuntimeException(ex);
+              }
+            })
+            .toList();
   }
 
   public static class RepoConfigurator {
@@ -49,11 +50,9 @@ public class GitHubRepoSettingsManager {
     }
 
     RepoConfigurator deleteHeadBranchOnMerge() throws IOException {
-      // bug: always returns false
-      //if (!repo.isDeleteBranchOnMerge()) {
-        log("delete branch on merge");
+      if (!repo.isDeleteBranchOnMerge()) {
         repo.deleteBranchOnMerge(true);
-      //}
+      }
       return this;
     }
 
