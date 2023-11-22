@@ -61,6 +61,7 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/branding-images.git"
     "git@github.com:axonivy/doc-images.git"
     "git@github.com:axonivy/case-map-ui.git"
+    "git@github.com:axonivy/config-editor-client.git"
     "git@github.com:axonivy/primefaces-themes.git"
     "git@github.com:axonivy/engine-cockpit.git"
     "git@github.com:axonivy/dev-workflow-ui.git"
