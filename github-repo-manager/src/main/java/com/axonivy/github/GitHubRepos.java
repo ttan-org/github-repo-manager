@@ -32,19 +32,21 @@ public class GitHubRepos {
           "core-icons");
 
   public static final  List<String> REPOS_TO_BRANCH = List.of(
-          "process-editor-client",
           "rules",
           "engine-cockpit",
           "dev-workflow-ui",
           "webeditor",
           "core",
           "primefaces-themes",
+          "process-editor-client",
           "process-editor-core",
-          "doc-images",
-          "case-map-ui",
-          "branding-images",
-          "thirdparty-libs",
           "inscription-client",
+          "doc-images",
+          "branding-images",
+          "case-map-ui",
+          "thirdparty-libs",
+          "swagger-ui-ivy",
+          "monaco-yaml-ivy",
           "project-build-examples");
 
   public static final  List<String> REPOS = new ArrayList<>();
