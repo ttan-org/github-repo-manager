@@ -5,6 +5,10 @@ pipeline {
     }
   }
 
+  triggers {
+    cron '@midnight'
+  }
+
   options {
     buildDiscarder(logRotator(numToKeepStr: '10'))
     disableConcurrentBuilds()
