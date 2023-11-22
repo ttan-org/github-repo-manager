@@ -78,7 +78,7 @@ public class GitHubIssueScanner {
   private static Set<Issue> scanReleaseNotesIssues(String releaseNotesFile) throws IOException {
     return Files.readAllLines(Path.of(releaseNotesFile))
         .stream()
-        .map(Issue::fromString)
+        .flatMap(Issue::fromString)
         .collect(Collectors.toSet());
   }
 
@@ -86,10 +86,7 @@ public class GitHubIssueScanner {
     var issues = new HashSet<Issue>();
     for (var commit : repo.queryCommits().from(branchName).since(since).until(until).list()) {
       var title = parseTitle(commit);
-      if (title.toLowerCase().startsWith("xivy-")) {
-        var issue = StringUtils.substringBefore(title, " ");
-        issues.add(Issue.fromString(issue));
-      }
+      issues.addAll(Issue.fromString(title).toList());
     }
     return issues;
   }
