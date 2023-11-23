@@ -56,6 +56,7 @@ function raiseDepsOfOurRepos {
     "git@github.com:axonivy/webeditor.git"
     "git@github.com:axonivy/process-editor-core.git"
     "git@github.com:axonivy/vscode-extensions.git"
+    "git@github.com:axonivy/process-editor-client.git"
     "git@github.com:axonivy/theia-ide.git"
   )
   message="Raise dependencies version to ${newVersion}"
