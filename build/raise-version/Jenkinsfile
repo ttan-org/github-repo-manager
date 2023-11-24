@@ -24,6 +24,7 @@ pipeline {
     stage('raise-version') {
       steps {        
         script {
+          currentBuild.description = "version: ${newVersion} branch: ${params.branch}"
           if (!dryRun) {
             mvn cmd: "-f build/new-jira-version/pom.xml initialize -DnewJiraVersion=${newVersion}"
           }
