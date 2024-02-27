@@ -70,6 +70,8 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/process-editor-client.git"
     "git@github.com:axonivy/process-editor-core.git"
     "git@github.com:axonivy/inscription-client.git"
+    "git@github.com:axonivy/form-editor-client.git"
+    "git@github.com:axonivy/ui-components.git"
     "git@github.com:axonivy/monaco-yaml-ivy.git"
     "git@github.com:axonivy/swagger-ui-ivy.git"
     "git@github.com:axonivy/core.git"
