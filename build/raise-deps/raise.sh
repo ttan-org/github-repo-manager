@@ -59,7 +59,6 @@ function raiseDepsOfOurRepos {
     "git@github.com:axonivy/process-editor-client.git"
     "git@github.com:axonivy/theia-ide.git"
   )
-  message="Raise dependencies version to ${newVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 

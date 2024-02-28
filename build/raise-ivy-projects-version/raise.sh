@@ -76,7 +76,7 @@ raiseProjects() {
   downloadEngine
   ${workDir}/engine/bin/EngineConfigCli migrate-project ${projects[@]}
   git add . #include new+moved files!
-  git commit -m "Raise IvyProjectVersion to latest"
+  git commit -m "Raise ivy projects to latest version"
 }
 
 updateProjectRepos() {
@@ -90,7 +90,6 @@ updateProjectRepos() {
     "git@github.com:axonivy/process-editor-client.git"
     "git@github.com:axonivy/inscription-client.git"
   )
-  message="Raise ivy projects to latest version"
   runRepoUpdate 'raiseProjects' "${projectRepos[@]}"
 }
 
