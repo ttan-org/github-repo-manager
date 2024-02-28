@@ -23,35 +23,50 @@ function runRepoUpdate {
   shift
   repos=("$@")
 
+  echo ""
+  echo "Run on the follwoing "${#repos[@]}" repos:"
   for repo in "${repos[@]}"; do
-    cloneDir="${workDir}/${repo}"
-    echo "clone repository ${repo} to ${cloneDir}"
-    git clone -q "${repo}" "${cloneDir}"
+   echo " - ${repo}"
+  done
+  echo ""
 
-    cd "${cloneDir}"
-
-    branchExists=$(git ls-remote --heads origin ${sourceBranch})
+  for repo in "${repos[@]}"; do
+    echo "==> start with repo '${repo}'"
+    
+    branchExists=$(git ls-remote --heads ${repo} refs/heads/${sourceBranch})
     if [[ -z ${branchExists} ]]; then
-      echo "skipping repository ${repo} because it has no ${sourceBranch} branch"
+      echo "--> skipping repo '${repo}' because it has no '${sourceBranch}' branch"; echo ""
       continue
     fi
 
-    git checkout -q "${sourceBranch}"
+    cloneDir="${workDir}/${repo}"
+    echo "git: clone branch '${sourceBranch}' of repo '${repo}' to '${cloneDir}'"
+    git clone -b ${sourceBranch} -q "${repo}" "${cloneDir}"
+
+    cd "${cloneDir}"
+
+    echo "git: create new branch '${newBranch}'"
     git checkout -q -b "${newBranch}" 
 
+    skipReason=""
     ${updateAction}
+    if [[ -n ${skipReason} ]]; then
+      echo "--> skipping repo '${repo}' because: ${skipReason}"; echo ""
+      continue
+    fi
 
     if [ "$dryRun" = "0" ]; then
       git push -q -u origin "${newBranch}"
 
       gh auth login --with-token < ${tokenFile}
-      gh pr create --title "${message}" --body "${message}" --base ${sourceBranch}
+      gh pr create --fill --base ${sourceBranch}
 
       if [ "$autoMerge" = "1" ]; then
         gh pr merge --merge
       fi
     fi
 
+    echo ""; echo "--> finished with repo '${repo}'"; echo ""
   done
   cd "${currentDir}"
 }

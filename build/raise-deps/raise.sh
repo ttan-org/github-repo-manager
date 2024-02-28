@@ -61,7 +61,6 @@ function raiseDepsOfOurRepos {
     "git@github.com:axonivy/form-editor-client.git"
     "git@github.com:axonivy/theia-ide.git"
   )
-  message="Raise dependencies version to ${newVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 

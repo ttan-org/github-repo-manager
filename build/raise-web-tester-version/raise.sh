@@ -57,7 +57,7 @@ tmpDirectory=$workDir
 
 function updateSingleRepo {
   .ivy/raise-web-tester.sh ${releaseVersion} ${snapshotVersion} >> 'maven.log'
-  git commit -a -m "${message}"
+  git commit -a -m "Raising web-tester version to ${releaseVersion}"
 }
 
 function raiseVersionOfOurRepos {
@@ -71,7 +71,6 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy-market/demo-projects"
   )
 
-  message="Raising web-tester version to ${releaseVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 

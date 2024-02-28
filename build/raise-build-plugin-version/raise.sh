@@ -66,7 +66,7 @@ tmpDirectory=$workDir
 
 function updateSingleRepo {
   .ivy/raise-build-plugin-version.sh ${releaseVersion} ${snapshotVersion} >> 'maven.log'
-  git commit -a -m "${message}"
+  git commit -a -m "Raising project-build-plugin version to ${releaseVersion} / ${snapshotVersion}"
 }
 
 function raiseVersionOfOurRepos {
@@ -86,7 +86,6 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/core"
   )
 
-  message="Raising project-build-plugin version to ${releaseVersion} / ${snapshotVersion}"
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
 
