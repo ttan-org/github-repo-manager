@@ -3,8 +3,11 @@
 if [ -z "$workDir" ]; then
   workDir=$(mktemp -d -t raiseRepoXXX)
 fi
-if [ -z "$dryRun" ]; then
-  dryRun=0
+if [ "$DRY_RUN" = false ]; then
+  echo ""; echo "This is NOT a DRY RUN! We will push to the origin Repos!"; echo "";
+else
+  echo ""; echo "This is a DRY RUN! Nothing is pushed!"
+  echo "Change it by setting the variable 'DRY_RUN' to 'false' before executing this script. ('export DRY_RUN=false')"; echo ""
 fi
 if [ -z "$autoMerge" ]; then
   autoMerge=0
@@ -55,7 +58,7 @@ function runRepoUpdate {
       continue
     fi
 
-    if [ "$dryRun" = "0" ]; then
+    if [ "$DRY_RUN" = false ]; then
       git push -q -u origin "${newBranch}"
 
       gh auth login --with-token < ${tokenFile}

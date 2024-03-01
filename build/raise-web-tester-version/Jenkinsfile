@@ -30,8 +30,10 @@ pipeline {
           withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no']) {
             withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
               sshagent(credentials: ['github-axonivy']) {
-                def dryRunCommand = params.dryRun ? '--dry-run' : ''
-                sh "build/raise-web-tester-version/raise.sh ${params.newReleaseVersion} ${params.newSnapshotVersion} ${params.branch} ${tokenFile} ${dryRunCommand}"
+                sh """
+                  export DRY_RUN=${params.dryRun}
+                  build/raise-web-tester-version/raise.sh ${params.newReleaseVersion} ${params.newSnapshotVersion} ${params.branch} ${tokenFile}
+                """
               }
             }
           }

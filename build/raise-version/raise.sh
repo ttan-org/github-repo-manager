@@ -33,16 +33,8 @@ echo "source branch to checkout repos $2"
 tokenFile=$3
 echo "token file to auth for gh cli ${tokenFile}"
 
-dryRun=0
-if [ $# -eq 4 ]; then
-  if [ $4 = "--dry-run" ]; then
-    dryRun=1
-  fi
-fi
-echo "dry run ${dryRun}"
-
 autoMerge=0
-if [ "$dryRun" = "0" ]; then
+if [ "$DRY_RUN" = false ]; then
   autoMerge=1
 fi
 echo "autoMerge ${autoMerge}"

@@ -11,14 +11,6 @@ fi
 tokenFile=$2
 echo "token file to auth for gh cli ${tokenFile}"
 
-dryRun=0
-if [ $# -eq 3 ]; then
-  if [ $3 = "--dry-run" ]; then
-    dryRun=1
-  fi
-fi
-echo "dry run: ${dryRun}"
-
 # do not convert these projects:
 declare -A exclusions=( 
   ["core.git"]="doc/screenshots/designer/screenshots/additionalProjects/oldVersionProject" 

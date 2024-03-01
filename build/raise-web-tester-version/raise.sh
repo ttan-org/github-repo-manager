@@ -39,14 +39,6 @@ echo "source branch to checkout repos ${sourceBranch}"
 tokenFile=$4
 echo "token file to auth for gh cli ${tokenFile}"
 
-dryRun=0
-if [ $# -eq 5 ]; then
-  if [ $5 = "--dry-run" ]; then
-    dryRun=1
-  fi
-fi
-echo "dry run ${dryRun}"
-
 newBranch=raise-web-tester-version-${releaseVersion}
 
 # switch to directory of this script
