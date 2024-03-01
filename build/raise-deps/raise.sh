@@ -33,14 +33,6 @@ echo "source branch to checkout repos $2"
 tokenFile=$3
 echo "token file to auth for gh cli ${tokenFile}"
 
-dryRun=0
-if [ $# -eq 4 ]; then
-  if [ $4 = "--dry-run" ]; then
-    dryRun=1
-  fi
-fi
-echo "dry run ${dryRun}"
-
 uuid=$(date +%s%N)
 newBranch=raise-version-${newVersion}-${uuid}
 

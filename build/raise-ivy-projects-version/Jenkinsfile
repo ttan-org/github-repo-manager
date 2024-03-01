@@ -37,8 +37,11 @@ pipeline {
           withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o LogLevel=error']) {
             withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
               sshagent(credentials: ['github-axonivy']) {
-                def dryRunCommand = params.dryRun ? '--dry-run' : ''
-                sh "export ivyVersion=${params.ivyVersion} && build/raise-ivy-projects-version/raise.sh ${params.engineUrl} ${tokenFile} ${dryRunCommand}"
+                sh """
+                  export DRY_RUN=${params.dryRun}
+                  export ivyVersion=${params.ivyVersion}
+                  build/raise-ivy-projects-version/raise.sh ${params.engineUrl} ${tokenFile}
+                """
                 archiveArtifacts 'build/raise-ivy-projects-version/conversion*.txt'
               }
             }            

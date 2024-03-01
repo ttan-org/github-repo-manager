@@ -25,7 +25,7 @@ pipeline {
         script {
           withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
             maven cmd: "-f github-repo-manager clean compile exec:java " + 
-                       "-DDRY_RUN=${dryRun} " +
+                       "-DDRY_RUN=${params.dryRun} " +
                        "-DGITHUB.TOKEN.FILE=${tokenFile} " +
                        "-Dexec.mainClass=\"com.axonivy.github.GitHubBrancher\" " +
                        "-Dexec.args=\"${params.minorVersion}\""
