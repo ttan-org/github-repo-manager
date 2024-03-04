@@ -8,9 +8,6 @@ set -e
 # Param 2: Source Branch (required)
 #   e.g.: master or release/8.0
 #
-# Param 3: dry run (optional)
-#   e.g.: --dry-run
-#
 
 if [ $# -eq 0 ]; then
   echo "Parameter version required"
