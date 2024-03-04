@@ -10,9 +10,6 @@ set -e
 #
 # Param 3: GitHub Cli token file
 #
-# Param 4: dry run (optional)
-#   e.g.: --dry-run
-#
 
 if [ $# -eq 0 ]; then
   echo "Parameter release version required"

@@ -11,9 +11,6 @@ set -e
 # Param 3: Token File for auth of gh cli (required)
 #   e.g.: ~/.gh-token-file
 #
-# Param 4: dry run (optional)
-#   e.g.: --dry-run
-#
 
 if [ $# -eq 0 ]; then
   echo "Parameter version required"
