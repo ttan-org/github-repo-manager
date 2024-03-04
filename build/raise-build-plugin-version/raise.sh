@@ -11,9 +11,6 @@ set -e
 # Param 3: Source Branch (required)
 #   e.g.: master or release/8.0
 #
-# Param 4: Token File for auth of gh cli (required)
-#   e.g.: ~/.gh-token-file
-#
 
 if [ $# -eq 0 ]; then
   echo "Parameter release version required"
@@ -27,10 +24,6 @@ if [ $# -eq 2 ]; then
   echo "Parameter source branch required"
   exit
 fi
-if [ $# -eq 3 ]; then
-  echo "Parameter tokenFile required"
-  exit
-fi
 
 releaseVersion=$1
 echo "raise release version to ${releaseVersion}"
@@ -40,9 +33,6 @@ echo "raise snapshot version to ${snapshotVersion}"
 
 sourceBranch=$3
 echo "source branch to checkout repos ${sourceBranch}"
-
-tokenFile=$4
-echo "token file to auth for gh cli ${tokenFile}"
 
 uuid=$(date +%s%N)
 newBranch=raise-project-build-plugin-version-${uuid}

@@ -79,6 +79,18 @@ function runRepoUpdate {
     echo " - ${repo}"
   done
 
+  echo ""
+  if [ -f "${GITHUB_TOKEN_FILE}" ]; then
+    echo "Login github cli with github token in file from variable 'GITHUB_TOKEN_FILE': ${GITHUB_TOKEN_FILE}"
+    gh auth login --with-token < ${GITHUB_TOKEN_FILE}
+  else
+    echo "Do not login to github cli because variable 'GITHUB_TOKEN_FILE' does not contain a valid file path: ${GITHUB_TOKEN_FILE}"
+  fi
+
+  echo "Check github cli auth status with 'gh auth status':"
+  gh auth status
+  echo ""
+
   for repo in "${reposToPush[@]}"; do
     echo ""; echo "==> start pushing repo '${repo}'"; echo ""
 
@@ -88,7 +100,6 @@ function runRepoUpdate {
     echo "Push branch ${newBranch} to repo ${repo}"
     git push -q -u origin "${newBranch}"
 
-    gh auth login --with-token < ${tokenFile}
     gh pr create --fill --base ${sourceBranch}
 
     if [ "$autoMerge" = "1" ]; then

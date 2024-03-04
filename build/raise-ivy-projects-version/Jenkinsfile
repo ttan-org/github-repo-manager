@@ -35,12 +35,12 @@ pipeline {
           sh "git config --global user.name 'ivy-team'"
           sh "git config --global user.email 'info@ivyteam.ch'"
           withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o LogLevel=error']) {
-            withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
+            withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'GITHUB_TOKEN_FILE')]) {
               sshagent(credentials: ['github-axonivy']) {
                 sh """
                   export DRY_RUN=${params.dryRun}
                   export ivyVersion=${params.ivyVersion}
-                  build/raise-ivy-projects-version/raise.sh ${params.engineUrl} ${tokenFile}
+                  build/raise-ivy-projects-version/raise.sh ${params.engineUrl}
                 """
                 archiveArtifacts 'build/raise-ivy-projects-version/conversion*.txt'
               }

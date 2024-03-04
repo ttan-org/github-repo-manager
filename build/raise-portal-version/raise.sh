@@ -17,19 +17,12 @@ if [ $# -eq 1 ]; then
   echo "Parameter source branch required"
   exit
 fi
-if [ $# -eq 2 ]; then
-  echo "Parameter tokenFile required"
-  exit
-fi
 
 newVersion=$1
 echo "raise version to ${newVersion}"
 
 sourceBranch=$2
 echo "source branch to checkout repos ${sourceBranch}"
-
-tokenFile=$3
-echo "token file to auth for gh cli ${tokenFile}"
 
 uuid=$(date +%s%N)
 newBranch=raise-portal-version-${newVersion}-${uuid}

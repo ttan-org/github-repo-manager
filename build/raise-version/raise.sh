@@ -8,9 +8,6 @@ set -e
 # Param 2: Source Branch (required)
 #   e.g.: master or release/8.0
 #
-# Param 3: Token File for auth of gh cli (required)
-#   e.g.: ~/.gh-token-file
-#
 
 if [ $# -eq 0 ]; then
   echo "Parameter version required"
@@ -26,9 +23,6 @@ echo "raise version to ${newVersion}"
 
 sourceBranch=$2
 echo "source branch to checkout repos $2"
-
-tokenFile=$3
-echo "token file to auth for gh cli ${tokenFile}"
 
 autoMerge=0
 if [ "$DRY_RUN" = false ]; then

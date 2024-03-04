@@ -8,9 +8,6 @@ if [ ! -z "$1" ]; then
   engineUrl=$1
 fi
 
-tokenFile=$2
-echo "token file to auth for gh cli ${tokenFile}"
-
 # do not convert these projects:
 declare -A exclusions=( 
   ["core.git"]="doc/screenshots/designer/screenshots/additionalProjects/oldVersionProject" 

@@ -28,11 +28,11 @@ pipeline {
           sh "git config --global user.name 'ivy-team'"
           sh "git config --global user.email 'info@ivyteam.ch'"
           withEnv(['GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no']) {
-            withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'tokenFile')]) {
+            withCredentials([file(credentialsId: 'github-ivyteam-token-repo-manager', variable: 'GITHUB_TOKEN_FILE')]) {
               sshagent(credentials: ['github-axonivy']) {
                 sh """
                   export DRY_RUN=${params.dryRun}
-                  build/raise-deps/raise.sh ${params.newVersion} ${params.branch} ${tokenFile}
+                  build/raise-deps/raise.sh ${params.newVersion} ${params.branch}
                 """
               }
             }

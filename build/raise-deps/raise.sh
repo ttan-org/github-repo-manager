@@ -27,9 +27,6 @@ echo "raise version to ${newVersion}"
 sourceBranch=$2
 echo "source branch to checkout repos $2"
 
-tokenFile=$3
-echo "token file to auth for gh cli ${tokenFile}"
-
 uuid=$(date +%s%N)
 newBranch=raise-version-${newVersion}-${uuid}
 
