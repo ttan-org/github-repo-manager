@@ -26,19 +26,19 @@ function runRepoUpdate {
   shift
   repos=("$@")
 
-  echo ""
-  echo "Run on the follwoing "${#repos[@]}" repos:"
+  echo ""; echo "Convert the follwoing "${#repos[@]}" repos:"
   for repo in "${repos[@]}"; do
-   echo " - ${repo}"
+    echo " - ${repo}"
   done
-  echo ""
+
+  reposToPush=()
 
   for repo in "${repos[@]}"; do
-    echo "==> start with repo '${repo}'"
+     echo ""; echo "==> start converting repo '${repo}'"; echo ""
     
     branchExists=$(git ls-remote --heads ${repo} refs/heads/${sourceBranch})
     if [[ -z ${branchExists} ]]; then
-      echo "--> skipping repo '${repo}' because it has no '${sourceBranch}' branch"; echo ""
+      echo ""; echo "--> skipping repo '${repo}' because it has no '${sourceBranch}' branch";
       continue
     fi
 
@@ -54,22 +54,48 @@ function runRepoUpdate {
     skipReason=""
     ${updateAction}
     if [[ -n ${skipReason} ]]; then
-      echo "--> skipping repo '${repo}' because: ${skipReason}"; echo ""
+      echo ""; echo "--> skipping repo '${repo}' because: ${skipReason}";
       continue
     fi
 
-    if [ "$DRY_RUN" = false ]; then
-      git push -q -u origin "${newBranch}"
+    reposToPush+=(${repo})
+    echo ""; echo "--> finished converting repo '${repo}'";
+  done
 
-      gh auth login --with-token < ${tokenFile}
-      gh pr create --fill --base ${sourceBranch}
+  if [ "$DRY_RUN" != false ]; then
+    echo ""; echo "Because this is a DRY RUN we are finished here and do NOT push!"
+    cd "${currentDir}"
+    return;
+  fi
 
-      if [ "$autoMerge" = "1" ]; then
-        gh pr merge --merge
-      fi
+  if [ "${#reposToPush[@]}" -eq 0 ]; then
+    echo ""; echo "Finished here because no repo has changed, nothing to push!"
+    cd "${currentDir}"
+    return;
+  fi
+
+  echo ""; echo "Push the follwoing "${#reposToPush[@]}" repos:"
+  for repo in "${reposToPush[@]}"; do
+    echo " - ${repo}"
+  done
+
+  for repo in "${reposToPush[@]}"; do
+    echo ""; echo "==> start pushing repo '${repo}'"; echo ""
+
+    cloneDir="${workDir}/${repo}"
+    cd "${cloneDir}"
+
+    echo "Push branch ${newBranch} to repo ${repo}"
+    git push -q -u origin "${newBranch}"
+
+    gh auth login --with-token < ${tokenFile}
+    gh pr create --fill --base ${sourceBranch}
+
+    if [ "$autoMerge" = "1" ]; then
+      gh pr merge --merge
     fi
 
-    echo ""; echo "--> finished with repo '${repo}'"; echo ""
+    echo ""; echo "--> finished pushing repo '${repo}'";
   done
   cd "${currentDir}"
 }
