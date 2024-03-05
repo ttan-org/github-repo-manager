@@ -8,8 +8,6 @@ set -e
 # Param 2: Source Branch (required)
 #   e.g.: master or release/8.0
 #
-# Param 3: GitHub Cli token file
-#
 
 if [ $# -eq 0 ]; then
   echo "Parameter release version required"
@@ -17,10 +15,6 @@ if [ $# -eq 0 ]; then
 fi
 if [ $# -eq 1 ]; then
   echo "Parameter source branch required"
-  exit
-fi
-if [ $# -eq 2 ]; then
-  echo "Parameter tokenFile required"
   exit
 fi
 
@@ -32,9 +26,6 @@ echo "raise snapshot version to ${snapshotVersion}"
 
 sourceBranch=$3
 echo "source branch to checkout repos ${sourceBranch}"
-
-tokenFile=$4
-echo "token file to auth for gh cli ${tokenFile}"
 
 newBranch=raise-web-tester-version-${releaseVersion}
 
