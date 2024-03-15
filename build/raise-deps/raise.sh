@@ -30,6 +30,8 @@ echo "source branch to checkout repos $2"
 uuid=$(date +%s%N)
 newBranch=raise-version-${newVersion}-${uuid}
 
+commitMessage="Raise dependencies version to ${newVersion}"
+
 # switch to directory of this script
 cd "$(dirname "$0")"
 
@@ -52,7 +54,6 @@ function raiseDepsOfOurRepos {
 
 function updateSingleRepo {
   .ivy/raise-deps.sh ${newVersion}
-  git commit -a -m "Raise dependencies version to ${newVersion}"
 }
 
 raiseDepsOfOurRepos

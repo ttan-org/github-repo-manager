@@ -37,6 +37,8 @@ echo "source branch to checkout repos ${sourceBranch}"
 uuid=$(date +%s%N)
 newBranch=raise-project-build-plugin-version-${uuid}
 
+commitMessage="Raising project-build-plugin version to ${releaseVersion} / ${snapshotVersion}"
+
 # switch to directory of this script
 cd "$(dirname "$0")"
 source "../raiseRepo.sh"
@@ -45,7 +47,6 @@ tmpDirectory=$workDir
 
 function updateSingleRepo {
   .ivy/raise-build-plugin-version.sh ${releaseVersion} ${snapshotVersion} >> 'maven.log'
-  git commit -a -m "Raising project-build-plugin version to ${releaseVersion} / ${snapshotVersion}"
 }
 
 function raiseVersionOfOurRepos {

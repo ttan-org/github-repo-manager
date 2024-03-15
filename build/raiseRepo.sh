@@ -58,6 +58,14 @@ function runRepoUpdate {
       continue
     fi
 
+    if [[ -z $(git status --porcelain) ]]; then
+      echo ""; echo "--> skipping repo '${repo}' because: Nothing has changed";
+      continue
+    fi
+
+    echo "git: commit with message: ${commitMessage}";
+    git commit -a -m "${commitMessage}"
+
     reposToPush+=(${repo})
     echo ""; echo "--> finished converting repo '${repo}'";
   done
