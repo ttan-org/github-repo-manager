@@ -27,6 +27,8 @@ echo "source branch to checkout repos ${sourceBranch}"
 uuid=$(date +%s%N)
 newBranch=raise-portal-version-${newVersion}-${uuid}
 
+commitMessage="Raise portal version to ${newVersion}"
+
 # switch to directory of this script
 cd "$(dirname "$0")"
 
@@ -41,7 +43,6 @@ function raiseVersionOfOurRepos {
 
 function updateSingleRepo {
   .ivy/raise-portal.sh ${newVersion}
-  git commit -a -m "Raise portal version to ${newVersion}"
 }
 
 raiseVersionOfOurRepos

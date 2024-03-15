@@ -18,6 +18,10 @@ workDir=$(mktemp -d -t projectConvertXXX)
 sourceBranch='master'
 uuid=$(date +%s%N)
 newBranch="raise-ivy-project-version-${uuid}"
+
+
+commitMessage="Raise ivy projects to latest version"
+
 source "${DIR}/../raiseRepo.sh"
 
 downloadEngine(){
@@ -65,7 +69,6 @@ raiseProjects() {
   downloadEngine
   ${workDir}/engine/bin/EngineConfigCli migrate-project ${projects[@]}
   git add . #include new+moved files!
-  git commit -m "Raise ivy projects to latest version"
 }
 
 updateProjectRepos() {

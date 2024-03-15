@@ -33,6 +33,8 @@ echo "autoMerge ${autoMerge}"
 uuid=$(date +%s%N)
 newBranch=raise-version-${newVersion}-${uuid}
 
+commitMessage="Raise version to ${newVersion}"
+
 # switch to directory of this script
 cd "$(dirname "$0")"
 
@@ -67,7 +69,6 @@ function raiseVersionOfOurRepos {
 
 function updateSingleRepo {
   .ivy/raise-version.sh ${newVersion}
-  git commit -a -m "Raise version to ${newVersion}"
 }
 
 raiseVersionOfOurRepos

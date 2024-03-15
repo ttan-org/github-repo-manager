@@ -29,6 +29,8 @@ echo "source branch to checkout repos ${sourceBranch}"
 
 newBranch=raise-web-tester-version-${releaseVersion}
 
+commitMessage="Raising web-tester version to ${releaseVersion}"
+
 # switch to directory of this script
 cd "$(dirname "$0")"
 source "../raiseRepo.sh"
@@ -37,7 +39,6 @@ tmpDirectory=$workDir
 
 function updateSingleRepo {
   .ivy/raise-web-tester.sh ${releaseVersion} ${snapshotVersion} >> 'maven.log'
-  git commit -a -m "Raising web-tester version to ${releaseVersion}"
 }
 
 function raiseVersionOfOurRepos {
