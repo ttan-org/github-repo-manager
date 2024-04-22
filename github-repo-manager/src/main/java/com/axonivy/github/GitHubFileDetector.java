@@ -12,7 +12,7 @@ public abstract class GitHubFileDetector {
 
 	protected static final String GITHUB_ORG = ".github";
 	protected final byte[] fileContent;
-	protected boolean isMissingRequiredFile = false;
+	protected boolean isMissingRequiredFile;
 	protected List<String> workingRepos = List.of("axonivy", "axonivy-market");
 
 	protected abstract String getRequiredFilePath();
