@@ -16,19 +16,12 @@ public class GitHubMissingFiles {
       "Add_Code_of_Conduct", "Add CODE_OF_CONDUCT.md file to repo");
 
   public static void main(String[] args) throws IOException {
-    int missingStatus;
-    var githubMissingFiles = new GitHubMissingFilesDetector(LICENSE, WORKING_REPOS);
-    var missingLicenseStatus = githubMissingFiles.checkMissingFile();
-    missingStatus = missingLicenseStatus != 0 ? missingLicenseStatus : 0;
-
-    githubMissingFiles = new GitHubMissingFilesDetector(SECURITY, WORKING_REPOS);
-    var missingSecurityStatus = githubMissingFiles.checkMissingFile();
-    missingStatus = missingSecurityStatus != 0 ? missingSecurityStatus : 0;
-
-    githubMissingFiles = new GitHubMissingFilesDetector(CODE_OF_CONDUCT, WORKING_REPOS);
-    var missingCODStatus = githubMissingFiles.checkMissingFile();
-    missingStatus = missingCODStatus != 0 ? missingCODStatus : 0;
-
+    int missingStatus = 0;
+    for (var fileMeta : List.of(LICENSE, SECURITY, CODE_OF_CONDUCT)) {
+      var githubMissingFiles = new GitHubMissingFilesDetector(fileMeta, WORKING_REPOS);
+      var returnedStatus = githubMissingFiles.checkMissingFile();
+      missingStatus = returnedStatus != 0 ? returnedStatus : 0;
+    }
     System.exit(missingStatus);
   }
 
