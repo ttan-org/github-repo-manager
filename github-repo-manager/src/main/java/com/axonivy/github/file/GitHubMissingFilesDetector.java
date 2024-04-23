@@ -72,6 +72,8 @@ public class GitHubMissingFilesDetector {
       } else {
         printInfoMessage("Repo {0} has {1}.", repo.getFullName(), foundFile.getName());
       }
+    } else {
+      addMissingFile(repo);
     }
   }
 
