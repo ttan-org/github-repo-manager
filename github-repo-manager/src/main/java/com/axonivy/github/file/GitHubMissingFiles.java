@@ -19,7 +19,7 @@ public class GitHubMissingFiles {
     for (var fileMeta : REQUIRED_FILES) {
       var githubMissingFiles = new GitHubMissingFilesDetector(fileMeta, WORKING_ORGANIZATIONS);
       var returnedStatus = githubMissingFiles.checkMissingFile();
-      missingStatus = returnedStatus != 0 ? returnedStatus : 0;
+      missingStatus = returnedStatus != 0 ? returnedStatus : missingStatus;
     }
     System.exit(missingStatus);
   }
