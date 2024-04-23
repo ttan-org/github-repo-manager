@@ -20,8 +20,8 @@ public class GitHubMissingFilesDetector {
   private static final String GITHUB_ORG = ".github";
   private final byte[] fileContent;
   private boolean isMissingRequiredFile;
-  private List<String> workingRepos;
-  private FileMeta requestFileMeta;
+  private final List<String> workingRepos;
+  private final FileMeta requestFileMeta;
 
   public GitHubMissingFilesDetector(FileMeta fileMeta, List<String> workingRepos) throws IOException {
     Objects.requireNonNull(fileMeta);
@@ -55,6 +55,9 @@ public class GitHubMissingFilesDetector {
   }
 
   private void checkMissingFile(GHRepository repo) throws IOException {
+    if (GITHUB_ORG.equals(repo.getName())) {
+      return;
+    }
     if (repo.isPrivate() || repo.isArchived()) {
       printInfoMessage("Repo {0} is {1}.", repo.getFullName(), repo.isPrivate() ? "private" : "archived");
       return;
@@ -69,8 +72,6 @@ public class GitHubMissingFilesDetector {
       } else {
         printInfoMessage("Repo {0} has {1}.", repo.getFullName(), foundFile.getName());
       }
-    } else if (!GITHUB_ORG.equals(repo.getName())) {
-      addMissingFile(repo);
     }
   }
 
