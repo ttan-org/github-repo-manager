@@ -47,6 +47,8 @@ function raiseDepsOfOurRepos {
     "git@github.com:axonivy/inscription-client.git"
     "git@github.com:axonivy/process-editor-client.git"
     "git@github.com:axonivy/form-editor-client.git"
+    "git@github.com:axonivy/config-editor-client.git"
+    "git@github.com:axonivy/ui-components.git"
     "git@github.com:axonivy/theia-ide.git"
   )
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
