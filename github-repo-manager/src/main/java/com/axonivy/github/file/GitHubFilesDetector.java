@@ -15,46 +15,39 @@ import com.axonivy.github.DryRun;
 import com.axonivy.github.GitHubProvider;
 import com.axonivy.github.file.GitHubFiles.FileMeta;
 
-public class GitHubMissingFilesDetector {
+public class GitHubFilesDetector {
 
   private static final String GITHUB_ORG = ".github";
-  private final byte[] fileContent;
   private boolean isMissingRequiredFile;
   private final List<String> workingRepos;
-  private final FileMeta requestFileMeta;
+  private final FileReference reference;
 
-  public GitHubMissingFilesDetector(FileMeta fileMeta, List<String> workingRepos) throws IOException {
+  public GitHubFilesDetector(FileMeta fileMeta, List<String> workingRepos) throws IOException {
     Objects.requireNonNull(fileMeta);
     Objects.requireNonNull(workingRepos);
-    this.requestFileMeta = fileMeta;
+    this.reference = new FileReference(fileMeta);
     this.workingRepos = workingRepos;
-    try (var is = GitHubMissingFilesDetector.class.getResourceAsStream(requestFileMeta.filePath())) {
-      if (is == null) {
-        throw new IOException(requestFileMeta.filePath() + " file not found");
-      }
-      this.fileContent = IOUtils.toByteArray(is);
-    }
   }
 
-  public int checkMissingFile() throws IOException {
+  public int missingFile() throws IOException {
     var github = GitHubProvider.get();
     printInfoMessage("Working on organizations: {0}.", workingRepos);
     for (var orgName : workingRepos) {
       var org = github.getOrganization(orgName);
       for (var repo : List.copyOf(org.getRepositories().values())) {
-        checkMissingFile(repo);
+        missingFile(repo);
       }
     }
     if (isMissingRequiredFile) {
-      printErrorMessage("At least one repository has no {0}.", requestFileMeta.filePath());
+      printErrorMessage("At least one repository has no {0}.", reference.meta().filePath());
       printErrorMessage("Add a {0} manually or run the build without DRYRUN to add {0} to the repository.",
-          requestFileMeta.filePath());
+          reference.meta().filePath());
       return -1;
     }
     return 0;
   }
 
-  private void checkMissingFile(GHRepository repo) throws IOException {
+  private void missingFile(GHRepository repo) throws IOException {
     if (GITHUB_ORG.equals(repo.getName())) {
       return;
     }
@@ -63,11 +56,11 @@ public class GitHubMissingFilesDetector {
       return;
     }
 
-    var foundFile = getFileContent(requestFileMeta.filePath(), repo);
+    var foundFile = getFileContent(reference.meta().filePath(), repo);
     if (foundFile != null) {
       if (!hasSimilarContent(foundFile)) {
         printInfoMessage("Repo {0} has {1} but the content is different from required file {2}.", repo.getFullName(),
-            foundFile.getName(), requestFileMeta.filePath());
+            foundFile.getName(), reference.meta().filePath());
         isMissingRequiredFile = true;
       } else {
         printInfoMessage("Repo {0} has {1}.", repo.getFullName(), foundFile.getName());
@@ -87,7 +80,7 @@ public class GitHubMissingFilesDetector {
   }
 
   private boolean hasSimilarContent(GHContent existingFile) throws IOException {
-    Reader targetContent = new CharSequenceReader(new String(fileContent));
+    Reader targetContent = new CharSequenceReader(new String(reference.content()));
     Reader actualContent = new CharSequenceReader(new String(existingFile.read().readAllBytes()));
     return IOUtils.contentEqualsIgnoreEOL(targetContent, actualContent);
   }
@@ -100,15 +93,15 @@ public class GitHubMissingFilesDetector {
       } else {
         var defaultBranch = repo.getBranch(repo.getDefaultBranch());
         var sha1 = defaultBranch.getSHA1();
-        repo.createRef("refs/heads/" + requestFileMeta.branchName(), sha1);
-        repo.createContent().branch(requestFileMeta.branchName()).path(requestFileMeta.filePath()).content(fileContent)
-            .message(requestFileMeta.commitMessage()).commit();
-        var pr = repo.createPullRequest(requestFileMeta.pullRequestTitle(), requestFileMeta.branchName(), repo.getDefaultBranch(), "");
-        pr.merge(requestFileMeta.commitMessage());
+        repo.createRef("refs/heads/" + reference.meta().branchName(), sha1);
+        repo.createContent().branch(reference.meta().branchName()).path(reference.meta().filePath()).content(reference.content())
+            .message(reference.meta().commitMessage()).commit();
+        var pr = repo.createPullRequest(reference.meta().pullRequestTitle(), reference.meta().branchName(), repo.getDefaultBranch(), "");
+        pr.merge(reference.meta().commitMessage());
       }
-      printInfoMessage("Repo {0} {1} added.", repo.getFullName(), requestFileMeta.filePath());
+      printInfoMessage("Repo {0} {1} added.", repo.getFullName(), reference.meta().filePath());
     } catch (IOException ex) {
-      printErrorMessage("Cannot add {0} to repo {1}.", repo.getFullName(), requestFileMeta.filePath());
+      printErrorMessage("Cannot add {0} to repo {1}.", repo.getFullName(), reference.meta().filePath());
       throw ex;
     }
   }
