@@ -2,7 +2,6 @@ package com.axonivy.github.file;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,62 +17,54 @@ import com.axonivy.github.file.GitHubFiles.FileMeta;
 public class GitHubMissingFilesDetector {
 
   private static final String GITHUB_ORG = ".github";
-  private final byte[] fileContent;
-  private boolean isMissingRequiredFile;
-  private final List<String> workingRepos;
-  private final FileMeta requestFileMeta;
+  private static final Logger LOG = new Logger();
+  private boolean isNotSync;
+  private final FileReference reference;
 
-  public GitHubMissingFilesDetector(FileMeta fileMeta, List<String> workingRepos) throws IOException {
+  public GitHubMissingFilesDetector(FileMeta fileMeta) throws IOException {
     Objects.requireNonNull(fileMeta);
-    Objects.requireNonNull(workingRepos);
-    this.requestFileMeta = fileMeta;
-    this.workingRepos = workingRepos;
-    try (var is = GitHubMissingFilesDetector.class.getResourceAsStream(requestFileMeta.filePath())) {
-      if (is == null) {
-        throw new IOException(requestFileMeta.filePath() + " file not found");
-      }
-      this.fileContent = IOUtils.toByteArray(is);
-    }
+    this.reference = new FileReference(fileMeta);
   }
 
-  public int checkMissingFile() throws IOException {
+  public int requireFile(List<String> orgNames) throws IOException {
+    Objects.requireNonNull(orgNames);
     var github = GitHubProvider.get();
-    printInfoMessage("Working on organizations: {0}.", workingRepos);
-    for (var orgName : workingRepos) {
+    LOG.info("Working on organizations: {0}.", orgNames);
+    for (var orgName : orgNames) {
       var org = github.getOrganization(orgName);
       for (var repo : List.copyOf(org.getRepositories().values())) {
-        checkMissingFile(repo);
+        missingFile(repo);
       }
     }
-    if (isMissingRequiredFile) {
-      printErrorMessage("At least one repository has no {0}.", requestFileMeta.filePath());
-      printErrorMessage("Add a {0} manually or run the build without DRYRUN to add {0} to the repository.",
-          requestFileMeta.filePath());
+    if (isNotSync) {
+      LOG.error("At least one repository has no {0}.", reference.meta().filePath());
+      LOG.error("Add a {0} manually or run the build without DRYRUN to add {0} to the repository.",
+          reference.meta().filePath());
       return -1;
     }
     return 0;
   }
 
-  private void checkMissingFile(GHRepository repo) throws IOException {
+  private void missingFile(GHRepository repo) throws IOException {
     if (GITHUB_ORG.equals(repo.getName())) {
       return;
     }
     if (repo.isPrivate() || repo.isArchived()) {
-      printInfoMessage("Repo {0} is {1}.", repo.getFullName(), repo.isPrivate() ? "private" : "archived");
+      LOG.info("Repo {0} is {1}.", repo.getFullName(), repo.isPrivate() ? "private" : "archived");
       return;
     }
 
-    var foundFile = getFileContent(requestFileMeta.filePath(), repo);
+    var foundFile = getFileContent(reference.meta().filePath(), repo);
     if (foundFile != null) {
       if (!hasSimilarContent(foundFile)) {
-        printInfoMessage("Repo {0} has {1} but the content is different from required file {2}.", repo.getFullName(),
-            foundFile.getName(), requestFileMeta.filePath());
-        isMissingRequiredFile = true;
+        LOG.info("Repo {0} has {1} but the content is different from required file {2}.", repo.getFullName(),
+            foundFile.getName(), reference.meta().filePath());
+        isNotSync = true;
       } else {
-        printInfoMessage("Repo {0} has {1}.", repo.getFullName(), foundFile.getName());
+        LOG.info("Repo {0} has {1}.", repo.getFullName(), foundFile.getName());
       }
     } else {
-      addMissingFile(repo);
+      handleMissingFile(repo);
     }
   }
 
@@ -81,43 +72,40 @@ public class GitHubMissingFilesDetector {
     try {
       return repo.getFileContent(path);
     } catch (Exception e) {
-      printErrorMessage("File {0} in repo {1} is not found.", path, repo.getFullName());
+      LOG.error("File {0} in repo {1} is not found.", path, repo.getFullName());
       return null;
     }
   }
 
   private boolean hasSimilarContent(GHContent existingFile) throws IOException {
-    Reader targetContent = new CharSequenceReader(new String(fileContent));
+    Reader targetContent = new CharSequenceReader(new String(reference.content()));
     Reader actualContent = new CharSequenceReader(new String(existingFile.read().readAllBytes()));
     return IOUtils.contentEqualsIgnoreEOL(targetContent, actualContent);
   }
 
-  private void addMissingFile(GHRepository repo) throws IOException {
+  private void handleMissingFile(GHRepository repo) throws IOException {
     try {
       if (DryRun.is()) {
-        isMissingRequiredFile = true;
-        printInfoMessage("DRYRUN: ");
+        isNotSync = true;
+        LOG.info("DRYRUN: ");
       } else {
-        var defaultBranch = repo.getBranch(repo.getDefaultBranch());
-        var sha1 = defaultBranch.getSHA1();
-        repo.createRef("refs/heads/" + requestFileMeta.branchName(), sha1);
-        repo.createContent().branch(requestFileMeta.branchName()).path(requestFileMeta.filePath()).content(fileContent)
-            .message(requestFileMeta.commitMessage()).commit();
-        var pr = repo.createPullRequest(requestFileMeta.pullRequestTitle(), requestFileMeta.branchName(), repo.getDefaultBranch(), "");
-        pr.merge(requestFileMeta.commitMessage());
+        addMissingFile(repo);
       }
-      printInfoMessage("Repo {0} {1} added.", repo.getFullName(), requestFileMeta.filePath());
+      LOG.info("Repo {0} {1} synced.", repo.getFullName(), reference.meta().filePath());
     } catch (IOException ex) {
-      printErrorMessage("Cannot add {0} to repo {1}.", repo.getFullName(), requestFileMeta.filePath());
+      LOG.error("Cannot add {0} to repo {1}.", repo.getFullName(), reference.meta().filePath());
       throw ex;
     }
   }
 
-  private void printInfoMessage(String pattern, Object... arguments) {
-    System.out.println(MessageFormat.format(pattern, arguments));
+  private void addMissingFile(GHRepository repo) throws IOException {
+    var defaultBranch = repo.getBranch(repo.getDefaultBranch());
+    var sha1 = defaultBranch.getSHA1();
+    repo.createRef("refs/heads/" + reference.meta().branchName(), sha1);
+    repo.createContent().branch(reference.meta().branchName()).path(reference.meta().filePath()).content(reference.content())
+        .message(reference.meta().commitMessage()).commit();
+    var pr = repo.createPullRequest(reference.meta().pullRequestTitle(), reference.meta().branchName(), repo.getDefaultBranch(), "");
+    pr.merge(reference.meta().commitMessage());
   }
 
-  private void printErrorMessage(String pattern, Object... arguments) {
-    System.err.println(MessageFormat.format(pattern, arguments));
-  }
 }
