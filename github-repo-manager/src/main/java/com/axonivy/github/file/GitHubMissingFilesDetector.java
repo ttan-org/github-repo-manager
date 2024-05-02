@@ -9,6 +9,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CharSequenceReader;
 import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.GitHub;
 
 import com.axonivy.github.DryRun;
 import com.axonivy.github.GitHubProvider;
@@ -20,15 +22,18 @@ public class GitHubMissingFilesDetector {
   private static final Logger LOG = new Logger();
   private boolean isNotSync;
   private final FileReference reference;
+  private final GitHub github;
+  private GHUser ghActor;
 
-  public GitHubMissingFilesDetector(FileMeta fileMeta) throws IOException {
+  public GitHubMissingFilesDetector(FileMeta fileMeta, String user) throws IOException {
     Objects.requireNonNull(fileMeta);
     this.reference = new FileReference(fileMeta);
+    this.github = GitHubProvider.get();
+    this.ghActor = github.getUser(user);
   }
 
   public int requireFile(List<String> orgNames) throws IOException {
     Objects.requireNonNull(orgNames);
-    var github = GitHubProvider.get();
     LOG.info("Working on organizations: {0}.", orgNames);
     for (var orgName : orgNames) {
       var org = github.getOrganization(orgName);
@@ -102,9 +107,16 @@ public class GitHubMissingFilesDetector {
     var defaultBranch = repo.getBranch(repo.getDefaultBranch());
     var sha1 = defaultBranch.getSHA1();
     repo.createRef("refs/heads/" + reference.meta().branchName(), sha1);
-    repo.createContent().branch(reference.meta().branchName()).path(reference.meta().filePath()).content(reference.content())
-        .message(reference.meta().commitMessage()).commit();
+    repo.createContent()
+      .branch(reference.meta().branchName())
+      .path(reference.meta().filePath())
+      .content(reference.content())
+      .message(reference.meta().commitMessage())
+      .commit();
     var pr = repo.createPullRequest(reference.meta().pullRequestTitle(), reference.meta().branchName(), repo.getDefaultBranch(), "");
+    if (ghActor != null) {
+      pr.setAssignees(ghActor);
+    }
     pr.merge(reference.meta().commitMessage());
   }
 

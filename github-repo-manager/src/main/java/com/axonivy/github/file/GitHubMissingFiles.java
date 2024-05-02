@@ -16,15 +16,20 @@ public class GitHubMissingFiles {
   private static final List<FileMeta> REMOVE_FILES = List.of(CODE_OF_CONDUCT);
 
   public static void main(String[] args) throws IOException {
+    String user = "";
+    if (args.length > 0) {
+      user = args[0];
+      System.out.println("running updates triggered by user "+user);
+    }
     int status = 0;
     for (var fileMeta : REQUIRED_FILES) {
-      var detector = new GitHubMissingFilesDetector(fileMeta);
+      var detector = new GitHubMissingFilesDetector(fileMeta, user);
       var returnedStatus = detector.requireFile(WORKING_ORGANIZATIONS);
       status = returnedStatus != 0 ? returnedStatus : status;
     }
     for (var fileMeta : REMOVE_FILES) {
-      var detector = new GitHubFilesRemover(fileMeta);
-      var returnedStatus = detector.removeFile(List.of("axonivy"));
+      var detector = new GitHubFilesRemover(fileMeta, user);
+      var returnedStatus = detector.removeFile(WORKING_ORGANIZATIONS);
       status = returnedStatus != 0 ? returnedStatus : status;
     }
     System.exit(status);

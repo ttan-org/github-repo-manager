@@ -9,6 +9,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CharSequenceReader;
 import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.GitHub;
 
 import com.axonivy.github.DryRun;
 import com.axonivy.github.GitHubProvider;
@@ -20,20 +22,23 @@ public class GitHubFilesRemover {
   private static final Logger LOG = new Logger();
   private boolean isNotSync;
   private final FileReference reference;
+  private final GitHub github;
+  private GHUser ghActor;
 
-  public GitHubFilesRemover(FileMeta fileMeta) throws IOException {
+  public GitHubFilesRemover(FileMeta fileMeta, String user) throws IOException {
     Objects.requireNonNull(fileMeta);
     this.reference = new FileReference(fileMeta);
+    this.github = GitHubProvider.get();
+    this.ghActor = github.getUser(user);
   }
 
   public int removeFile(List<String> orgNames) throws IOException {
     Objects.requireNonNull(orgNames);
-    var github = GitHubProvider.get();
     LOG.info("Working on organizations: {0}.", orgNames);
     for (var orgName : orgNames) {
       var org = github.getOrganization(orgName);
       for (var repo : List.copyOf(org.getRepositories().values())) {
-        missingFile(repo);
+        removeRepoFile(repo);
       }
     }
     if (isNotSync) {
@@ -45,7 +50,7 @@ public class GitHubFilesRemover {
     return 0;
   }
 
-  private void missingFile(GHRepository repo) throws IOException {
+  private void removeRepoFile(GHRepository repo) throws IOException {
     if (GITHUB_ORG.equals(repo.getName())) {
       return;
     }
@@ -102,7 +107,10 @@ public class GitHubFilesRemover {
     repo.createRef("refs/heads/" + reference.meta().branchName(), sha1);
     foundFile.delete(reference.meta().commitMessage(), reference.meta().branchName());
     var pr = repo.createPullRequest(reference.meta().pullRequestTitle(), reference.meta().branchName(), repo.getDefaultBranch(), "");
-    LOG.info("Review the PR on "+ pr.getUrl());
+    if (ghActor != null) {
+      pr.setAssignees(ghActor);
+    }
+    LOG.info("Review the PR on "+ pr.getHtmlUrl());
     //pr.merge(reference.meta().commitMessage());
   }
 
