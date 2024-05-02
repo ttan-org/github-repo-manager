@@ -13,7 +13,7 @@ public class GitHubRepoSettingsManager {
       new RepoConfigurator(repo)
               .deleteHeadBranchOnMerge()
               .disableProjects()
-              .disableIssues()
+              .enableIssues()
               .disableWiki()
               .deleteHooks()
               .protectBranches(true);
