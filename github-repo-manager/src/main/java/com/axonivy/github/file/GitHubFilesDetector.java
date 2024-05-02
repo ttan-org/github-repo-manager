@@ -18,27 +18,25 @@ import com.axonivy.github.file.GitHubFiles.FileMeta;
 public class GitHubFilesDetector {
 
   private static final String GITHUB_ORG = ".github";
-  private boolean isMissingRequiredFile;
-  private final List<String> workingRepos;
+  private boolean isNotSync;
   private final FileReference reference;
 
-  public GitHubFilesDetector(FileMeta fileMeta, List<String> workingRepos) throws IOException {
+  public GitHubFilesDetector(FileMeta fileMeta) throws IOException {
     Objects.requireNonNull(fileMeta);
-    Objects.requireNonNull(workingRepos);
     this.reference = new FileReference(fileMeta);
-    this.workingRepos = workingRepos;
   }
 
-  public int missingFile() throws IOException {
+  public int requireFile(List<String> orgNames) throws IOException {
+    Objects.requireNonNull(orgNames);
     var github = GitHubProvider.get();
-    printInfoMessage("Working on organizations: {0}.", workingRepos);
-    for (var orgName : workingRepos) {
+    printInfoMessage("Working on organizations: {0}.", orgNames);
+    for (var orgName : orgNames) {
       var org = github.getOrganization(orgName);
       for (var repo : List.copyOf(org.getRepositories().values())) {
         missingFile(repo);
       }
     }
-    if (isMissingRequiredFile) {
+    if (isNotSync) {
       printErrorMessage("At least one repository has no {0}.", reference.meta().filePath());
       printErrorMessage("Add a {0} manually or run the build without DRYRUN to add {0} to the repository.",
           reference.meta().filePath());
@@ -61,12 +59,12 @@ public class GitHubFilesDetector {
       if (!hasSimilarContent(foundFile)) {
         printInfoMessage("Repo {0} has {1} but the content is different from required file {2}.", repo.getFullName(),
             foundFile.getName(), reference.meta().filePath());
-        isMissingRequiredFile = true;
+        isNotSync = true;
       } else {
         printInfoMessage("Repo {0} has {1}.", repo.getFullName(), foundFile.getName());
       }
     } else {
-      addMissingFile(repo);
+      handleMissingFile(repo);
     }
   }
 
@@ -85,25 +83,29 @@ public class GitHubFilesDetector {
     return IOUtils.contentEqualsIgnoreEOL(targetContent, actualContent);
   }
 
-  private void addMissingFile(GHRepository repo) throws IOException {
+  private void handleMissingFile(GHRepository repo) throws IOException {
     try {
       if (DryRun.is()) {
-        isMissingRequiredFile = true;
+        isNotSync = true;
         printInfoMessage("DRYRUN: ");
       } else {
-        var defaultBranch = repo.getBranch(repo.getDefaultBranch());
-        var sha1 = defaultBranch.getSHA1();
-        repo.createRef("refs/heads/" + reference.meta().branchName(), sha1);
-        repo.createContent().branch(reference.meta().branchName()).path(reference.meta().filePath()).content(reference.content())
-            .message(reference.meta().commitMessage()).commit();
-        var pr = repo.createPullRequest(reference.meta().pullRequestTitle(), reference.meta().branchName(), repo.getDefaultBranch(), "");
-        pr.merge(reference.meta().commitMessage());
+        addMissingFile(repo);
       }
-      printInfoMessage("Repo {0} {1} added.", repo.getFullName(), reference.meta().filePath());
+      printInfoMessage("Repo {0} {1} synced.", repo.getFullName(), reference.meta().filePath());
     } catch (IOException ex) {
       printErrorMessage("Cannot add {0} to repo {1}.", repo.getFullName(), reference.meta().filePath());
       throw ex;
     }
+  }
+
+  private void addMissingFile(GHRepository repo) throws IOException {
+    var defaultBranch = repo.getBranch(repo.getDefaultBranch());
+    var sha1 = defaultBranch.getSHA1();
+    repo.createRef("refs/heads/" + reference.meta().branchName(), sha1);
+    repo.createContent().branch(reference.meta().branchName()).path(reference.meta().filePath()).content(reference.content())
+        .message(reference.meta().commitMessage()).commit();
+    var pr = repo.createPullRequest(reference.meta().pullRequestTitle(), reference.meta().branchName(), repo.getDefaultBranch(), "");
+    pr.merge(reference.meta().commitMessage());
   }
 
   private void printInfoMessage(String pattern, Object... arguments) {

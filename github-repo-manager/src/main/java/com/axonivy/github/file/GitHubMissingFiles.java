@@ -17,8 +17,8 @@ public class GitHubMissingFiles {
   public static void main(String[] args) throws IOException {
     int missingStatus = 0;
     for (var fileMeta : REQUIRED_FILES) {
-      var detector = new GitHubFilesDetector(fileMeta, WORKING_ORGANIZATIONS);
-      var returnedStatus = detector.missingFile();
+      var detector = new GitHubFilesDetector(fileMeta);
+      var returnedStatus = detector.requireFile(WORKING_ORGANIZATIONS);
       missingStatus = returnedStatus != 0 ? returnedStatus : missingStatus;
     }
     System.exit(missingStatus);
