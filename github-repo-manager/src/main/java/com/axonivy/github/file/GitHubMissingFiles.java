@@ -12,16 +12,22 @@ import com.axonivy.github.file.GitHubFiles.FileMeta;
 public class GitHubMissingFiles {
 
   private static final List<String> WORKING_ORGANIZATIONS = List.of("axonivy", "axonivy-market");
-  private static final List<FileMeta> REQUIRED_FILES = List.of(LICENSE, SECURITY, CODE_OF_CONDUCT);
+  private static final List<FileMeta> REQUIRED_FILES = List.of(LICENSE, SECURITY);
+  private static final List<FileMeta> REMOVE_FILES = List.of(CODE_OF_CONDUCT);
 
   public static void main(String[] args) throws IOException {
-    int missingStatus = 0;
+    int status = 0;
     for (var fileMeta : REQUIRED_FILES) {
       var detector = new GitHubMissingFilesDetector(fileMeta);
       var returnedStatus = detector.requireFile(WORKING_ORGANIZATIONS);
-      missingStatus = returnedStatus != 0 ? returnedStatus : missingStatus;
+      status = returnedStatus != 0 ? returnedStatus : status;
     }
-    System.exit(missingStatus);
+    for (var fileMeta : REMOVE_FILES) {
+      var detector = new GitHubFilesRemover(fileMeta);
+      var returnedStatus = detector.removeFile(List.of("axonivy"));
+      status = returnedStatus != 0 ? returnedStatus : status;
+    }
+    System.exit(status);
   }
 
 }
