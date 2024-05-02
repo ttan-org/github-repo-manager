@@ -14,14 +14,14 @@ import com.axonivy.github.DryRun;
 import com.axonivy.github.GitHubProvider;
 import com.axonivy.github.file.GitHubFiles.FileMeta;
 
-public class GitHubFilesDetector {
+public class GitHubMissingFilesDetector {
 
   private static final String GITHUB_ORG = ".github";
   private static final Logger LOG = new Logger();
   private boolean isNotSync;
   private final FileReference reference;
 
-  public GitHubFilesDetector(FileMeta fileMeta) throws IOException {
+  public GitHubMissingFilesDetector(FileMeta fileMeta) throws IOException {
     Objects.requireNonNull(fileMeta);
     this.reference = new FileReference(fileMeta);
   }

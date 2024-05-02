@@ -14,7 +14,7 @@ public record FileReference(FileMeta meta, byte[] content) {
   }
 
   private static byte[] load(FileMeta meta) throws IOException {
-    try (var is = GitHubFilesDetector.class.getResourceAsStream(meta.filePath())) {
+    try (var is = GitHubMissingFilesDetector.class.getResourceAsStream(meta.filePath())) {
       if (is == null) {
         throw new IOException(meta.filePath() + " file not found");
       }
