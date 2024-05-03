@@ -16,7 +16,7 @@ import com.axonivy.github.DryRun;
 import com.axonivy.github.GitHubProvider;
 import com.axonivy.github.file.GitHubFiles.FileMeta;
 
-public class GitHubMissingFilesDetector {
+public class GitHubFilesRemover {
 
   private static final String GITHUB_ORG = ".github";
   private static final Logger LOG = new Logger();
@@ -25,32 +25,32 @@ public class GitHubMissingFilesDetector {
   private final GitHub github;
   private GHUser ghActor;
 
-  public GitHubMissingFilesDetector(FileMeta fileMeta, String user) throws IOException {
+  public GitHubFilesRemover(FileMeta fileMeta, String user) throws IOException {
     Objects.requireNonNull(fileMeta);
     this.reference = new FileReference(fileMeta);
     this.github = GitHubProvider.get();
     this.ghActor = github.getUser(user);
   }
 
-  public int requireFile(List<String> orgNames) throws IOException {
+  public int removeFile(List<String> orgNames) throws IOException {
     Objects.requireNonNull(orgNames);
     LOG.info("Working on organizations: {0}.", orgNames);
     for (var orgName : orgNames) {
       var org = github.getOrganization(orgName);
       for (var repo : List.copyOf(org.getRepositories().values())) {
-        missingFile(repo);
+        removeRepoFile(repo);
       }
     }
     if (isNotSync) {
-      LOG.error("At least one repository has no {0}.", reference.meta().filePath());
-      LOG.error("Add a {0} manually or run the build without DRYRUN to add {0} to the repository.",
+      LOG.error("At least one repository has {0}.", reference.meta().filePath());
+      LOG.error("Remove {0} manually or run the build without DRYRUN to remove {0} from the repository.",
           reference.meta().filePath());
       return -1;
     }
     return 0;
   }
 
-  private void missingFile(GHRepository repo) throws IOException {
+  private void removeRepoFile(GHRepository repo) throws IOException {
     if (GITHUB_ORG.equals(repo.getName())) {
       return;
     }
@@ -61,15 +61,13 @@ public class GitHubMissingFilesDetector {
 
     var foundFile = getFileContent(reference.meta().filePath(), repo);
     if (foundFile != null) {
-      if (!hasSimilarContent(foundFile)) {
-        LOG.info("Repo {0} has {1} but the content is different from required file {2}.", repo.getFullName(),
-            foundFile.getName(), reference.meta().filePath());
+      if (hasSimilarContent(foundFile)) {
+        LOG.info("Repo {0} contains {1}", repo.getFullName(), foundFile.getName());
         isNotSync = true;
+        handleRemoveFile(repo, foundFile);
       } else {
-        LOG.info("Repo {0} has {1}.", repo.getFullName(), foundFile.getName());
+        LOG.info("Repo {0} has {1}, but the content is different.", repo.getFullName(), foundFile.getName());
       }
-    } else {
-      handleMissingFile(repo);
     }
   }
 
@@ -88,36 +86,32 @@ public class GitHubMissingFilesDetector {
     return IOUtils.contentEqualsIgnoreEOL(targetContent, actualContent);
   }
 
-  private void handleMissingFile(GHRepository repo) throws IOException {
+  private void handleRemoveFile(GHRepository repo, GHContent foundFile) throws IOException {
     try {
       if (DryRun.is()) {
         isNotSync = true;
         LOG.info("DRYRUN: ");
       } else {
-        addMissingFile(repo);
+        removeFileOnGit(repo, foundFile);
       }
-      LOG.info("Repo {0} {1} synced.", repo.getFullName(), reference.meta().filePath());
+      LOG.info("Repo {0} file {1} removed.", repo.getFullName(), reference.meta().filePath());
     } catch (IOException ex) {
-      LOG.error("Cannot add {0} to repo {1}.", repo.getFullName(), reference.meta().filePath());
+      LOG.error("Cannot remove {0} from repo {1}.", repo.getFullName(), reference.meta().filePath());
       throw ex;
     }
   }
 
-  private void addMissingFile(GHRepository repo) throws IOException {
+  private void removeFileOnGit(GHRepository repo, GHContent foundFile) throws IOException {
     var defaultBranch = repo.getBranch(repo.getDefaultBranch());
     var sha1 = defaultBranch.getSHA1();
     repo.createRef("refs/heads/" + reference.meta().branchName(), sha1);
-    repo.createContent()
-      .branch(reference.meta().branchName())
-      .path(reference.meta().filePath())
-      .content(reference.content())
-      .message(reference.meta().commitMessage())
-      .commit();
+    foundFile.delete(reference.meta().commitMessage(), reference.meta().branchName());
     var pr = repo.createPullRequest(reference.meta().pullRequestTitle(), reference.meta().branchName(), repo.getDefaultBranch(), "");
     if (ghActor != null) {
       pr.setAssignees(ghActor);
     }
-    pr.merge(reference.meta().commitMessage());
+    LOG.info("Review the PR on "+ pr.getHtmlUrl());
+    //pr.merge(reference.meta().commitMessage());
   }
 
 }
