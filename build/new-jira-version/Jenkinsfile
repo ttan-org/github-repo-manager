@@ -22,7 +22,7 @@ pipeline {
     stage('build') {
       steps {
         script {
-          mvn cmd: "-f build/new-jira-version/pom.xml initialize -DnewJiraVersion=${newJiraVersion}"
+          maven cmd: "-f build/new-jira-version/pom.xml initialize -DnewJiraVersion=${newJiraVersion}"
         }
       }      
     }
