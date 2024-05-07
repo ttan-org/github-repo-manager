@@ -42,7 +42,7 @@ function runRepoUpdate {
       continue
     fi
 
-    cloneDir="${workDir}/${repo}"
+    cloneDir=$(echo "${workDir}/${repo}" | sed 's|:|-|g')
     echo "git: clone branch '${sourceBranch}' of repo '${repo}' to '${cloneDir}'"
     git clone -b ${sourceBranch} -q "${repo}" "${cloneDir}"
 
