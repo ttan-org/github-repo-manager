@@ -26,7 +26,7 @@ pipeline {
         script {
           currentBuild.description = "version: ${params.newVersion} branch: ${params.branch} dryRun: ${params.dryRun}"
           if (!params.dryRun) {
-            mvn cmd: "-f build/new-jira-version/pom.xml initialize -DnewJiraVersion=${params.newVersion}"
+            build job: 'github-repo-manager_new-jira-version/master', parameters: [string(name: 'newJiraVersion', value: "${params.newVersion}")]
           }
           sh "git config --global user.name 'ivy-team'"
           sh "git config --global user.email 'info@ivyteam.ch'"
