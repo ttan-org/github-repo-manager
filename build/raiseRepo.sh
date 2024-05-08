@@ -102,7 +102,7 @@ function runRepoUpdate {
   for repo in "${reposToPush[@]}"; do
     echo ""; echo "==> start pushing repo '${repo}'"; echo ""
 
-    cloneDir="${workDir}/${repo}"
+    cloneDir=$(echo "${workDir}/${repo}" | sed 's|:|-|g')
     cd "${cloneDir}"
 
     echo "Push branch ${newBranch} to repo ${repo}"
