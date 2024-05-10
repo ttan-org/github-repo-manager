@@ -27,7 +27,7 @@ public class GitHubRepoTagger {
       } else if ("release/8.0".equals(branch)) {
         repos = GitHubRepos.REPOS8;
       } else {
-        repos = GitHubRepos.REPOS;
+        repos = GitHubRepos.REPOS_TO_TAG;
       }
 
       for (var repo : repos) {
