@@ -52,10 +52,17 @@ public class GitHubRepos {
           "monaco-yaml-ivy",
           "project-build-examples");
 
-  public static final  List<String> REPOS = new ArrayList<>();
+  public static final List<String> REPOS_TO_TAG = new ArrayList<>();
+
+  private static final List<String> REPOS = new ArrayList<>();
 
   static {
-    REPOS.addAll(REPOS_TO_BRANCH);
-    REPOS.addAll(List.of("p2-targetplatform", "engine-launchers", "core-icons"));
+    REPOS_TO_TAG.addAll(REPOS_TO_BRANCH);
+    REPOS_TO_TAG.addAll(List.of(
+        "p2-targetplatform",
+        "engine-launchers",
+        "core-icons"));
+    REPOS.addAll(REPOS_TO_TAG);
+    REPOS.add("project-build-plugin");
   }
 }
