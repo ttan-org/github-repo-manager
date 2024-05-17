@@ -66,7 +66,7 @@ function updateSingleRepo {
   # Ignore exceptions here, because sed throw an error if no file matches
   set +e
   # likely not working on mac
-  sed -i -E "${sedRegexp}" ${fileSelector} || { skipReason="sed failed" }
+  sed -i -E "${sedRegexp}" ${fileSelector} || skipReason="sed failed"
   set -e
 }
 
