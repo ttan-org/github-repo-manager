@@ -61,12 +61,10 @@ public class GitHubMissingFilesDetector {
 
     var foundFile = getFileContent(reference.meta().filePath(), repo);
     if (foundFile != null) {
-      if (!hasSimilarContent(foundFile)) {
-        LOG.info("Repo {0} has {1} but the content is different from required file {2}.", repo.getFullName(),
-            foundFile.getName(), reference.meta().filePath());
-        isNotSync = true;
-      } else {
+      if (hasSimilarContent(foundFile)) {
         LOG.info("Repo {0} has {1}.", repo.getFullName(), foundFile.getName());
+      } else {
+        handleOtherContent(repo, foundFile);
       }
     } else {
       handleMissingFile(repo);
@@ -118,6 +116,42 @@ public class GitHubMissingFilesDetector {
       pr.setAssignees(ghActor);
     }
     pr.merge(reference.meta().commitMessage());
+  }
+
+  private void handleOtherContent(GHRepository repo, GHContent foundFile) throws IOException {
+    try {
+      if (DryRun.is()) {
+        isNotSync = true;
+        LOG.info("DRYRUN: ");
+        LOG.info("Repo {0} has {1} but the content is different from required file {2}.",
+          repo.getFullName(), foundFile.getName(), reference.meta().filePath());
+      } else {
+        updateFile(repo, foundFile);
+        LOG.info("Repo {0} {1} synced.", repo.getFullName(), reference.meta().filePath());
+      }
+    } catch (IOException ex) {
+      LOG.error("Cannot update {1} in repo {0}.", repo.getFullName(), reference.meta().filePath());
+      throw ex;
+    }
+  }
+
+  private void updateFile(GHRepository repo, GHContent foundFile) throws IOException {
+    var headBranch = repo.getBranch(repo.getDefaultBranch());
+    repo.createRef("refs/heads/" + reference.meta().branchName(), headBranch.getSHA1());
+    foundFile.update(reference.content(),
+      reference.meta().commitMessage(),
+      reference.meta().branchName()
+    );
+    var pr = repo.createPullRequest(
+      reference.meta().pullRequestTitle(),
+      reference.meta().branchName(),
+      repo.getDefaultBranch(),
+      ""
+    );
+    if (ghActor != null) {
+      pr.setAssignees(ghActor);
+      // we open a PR; but auto-merging of it should be avoided
+    }
   }
 
 }
