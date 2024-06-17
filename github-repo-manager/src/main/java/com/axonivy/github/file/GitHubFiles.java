@@ -7,7 +7,7 @@ public interface GitHubFiles {
   FileMeta SECURITY = new FileMeta("SECURITY.md", "Add security file", "Add_Security",
       "Add Security.md file to repo");
   FileMeta CODE_OF_CONDUCT = new FileMeta("CODE_OF_CONDUCT.md", "Add code of conduct file",
-      "Add_Code_of_Conduct", "Add CODE_OF_CONDUCT.md file to repo");
+      "Add_Code_of_Conduct_v2", "Add CODE_OF_CONDUCT.md file to repo");
 
   public record FileMeta(String filePath, String pullRequestTitle, String branchName, String commitMessage) {
 
