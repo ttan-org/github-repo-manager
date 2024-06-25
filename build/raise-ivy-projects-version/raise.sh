@@ -33,8 +33,8 @@ downloadEngine(){
   fi
   jar="*thirdparty*.jar"
   if [ -z "$(ls ${workDir}/engine/dropins/${jar})" ]; then
-    curl --output ${workDir}/engine/p2.zip https://drone.ivyteam.io/unzip/maven/prefixed/ivy-core/ch.ivyteam.ivy/ch.ivyteam.ivy.core.p2/${ivyVersion}-SNAPSHOT
-    unzip -j ${workDir}/engine/p2.zip plugins/ch.ivyteam.ivy.bpm.exec.thirdparty* -d ${workDir}/engine/dropins 
+    curl --output ${workDir}/engine/dropins/bpm.exec.thirdparty_le11.jar\
+     https://p2.ivyteam.io/thirdparty-bpm/ch.ivyteam.ivy.bpm.exec.thirdparty_le11.jar
   fi
 }
 clean(){
