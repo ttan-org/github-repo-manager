@@ -31,7 +31,7 @@ public class GitHubRepos {
           "engine-launchers",
           "core-icons");
 
-  public static final  List<String> REPOS_TO_BRANCH = List.of(
+  public static final List<String> REPOS_TO_BRANCH = List.of(
           "rules",
           "engine-cockpit",
           "dev-workflow-ui",
@@ -44,6 +44,7 @@ public class GitHubRepos {
           "config-editor-client",
           "form-editor-client",
           "ui-components",
+          "neo",
           "doc-images",
           "branding-images",
           "case-map-ui",

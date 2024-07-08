@@ -81,6 +81,8 @@ updateProjectRepos() {
     "git@github.com:axonivy/cluster-tests.git"
     "git@github.com:axonivy/process-editor-client.git"
     "git@github.com:axonivy/inscription-client.git"
+    "git@github.com:axonivy/config-editor-client.git"
+    "git@github.com:axonivy/neo.git"
     "git@github.com:axonivy/vscode-extensions.git"
   )
   runRepoUpdate 'raiseProjects' "${projectRepos[@]}"
