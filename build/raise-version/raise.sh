@@ -43,7 +43,6 @@ source "../raiseRepo.sh"
 function raiseVersionOfOurRepos {
   repos=(
     "git@github.com:axonivy-market/demo-projects.git"
-    "git@github.com:axonivy/branding-images.git"
     "git@github.com:axonivy/doc-images.git"
     "git@github.com:axonivy/case-map-ui.git"
     "git@github.com:axonivy/config-editor-client.git"
