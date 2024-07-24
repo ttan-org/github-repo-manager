@@ -61,7 +61,6 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/swagger-ui-ivy.git"
     "git@github.com:axonivy/core.git"
     "git@github.com:axonivy/vscode-extensions.git"
-    "git@github.com:axonivy/theia-ide.git"
   )
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
 }
