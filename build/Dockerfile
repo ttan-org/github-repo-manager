@@ -1,4 +1,4 @@
-FROM maven:3.9.8-eclipse-temurin-21-jammy
+FROM maven:3.9.9-eclipse-temurin-21-jammy
 
 RUN addgroup --gid 1000 build && adduser --uid 1000 --gid 1000 --disabled-password --gecos "" build && \
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
