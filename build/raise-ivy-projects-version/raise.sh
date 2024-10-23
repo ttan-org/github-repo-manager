@@ -84,6 +84,7 @@ updateProjectRepos() {
     "git@github.com:axonivy/config-editor-client.git"
     "git@github.com:axonivy/neo.git"
     "git@github.com:axonivy/dataclass-editor-client.git"
+    "git@github.com:axonivy/form-editor-client.git"
     "git@github.com:axonivy/vscode-extensions.git"
   )
   runRepoUpdate 'raiseProjects' "${projectRepos[@]}"
