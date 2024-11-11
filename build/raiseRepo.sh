@@ -63,6 +63,11 @@ function runRepoUpdate {
       continue
     fi
 
+    if [ "$DRY_RUN" != false ]; then
+      echo ""; echo "DRY RUN: Changes were simulated however, in the following files:"
+      git --no-pager status -s
+    fi
+
     echo "git: commit with message: ${commitMessage}";
     git commit -a -m "${commitMessage}"
 
