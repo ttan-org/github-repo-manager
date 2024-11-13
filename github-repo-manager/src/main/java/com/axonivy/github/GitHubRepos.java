@@ -44,6 +44,7 @@ public class GitHubRepos {
           "config-editor-client",
           "form-editor-client",
           "ui-components",
+          "dataclass-editor-client",
           "neo",
           "doc-images",
           "case-map-ui",
