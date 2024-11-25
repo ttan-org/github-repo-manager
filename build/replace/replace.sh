@@ -104,7 +104,6 @@ function searchReplaceOfOurRepos {
     "git@github.com:axonivy/github-repo-manager.git"
     "git@github.com:axonivy/hibernate-envers-sample.git"
     "git@github.com:axonivy/infra.git"
-    "git@github.com:axonivy/inscription-client.git"
     "git@github.com:axonivy/issue-reproducer.git"
     "git@github.com:axonivy/ivymx.git"
     "git@github.com:axonivy/kubernetes-samples.git"
