@@ -61,7 +61,6 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/engine-cockpit.git"
     "git@github.com:axonivy/dev-workflow-ui.git"
     "git@github.com:axonivy/process-editor-client.git"
-    "git@github.com:axonivy/inscription-client.git"
     "git@github.com:axonivy/config-editor-client.git"
     "git@github.com:axonivy/neo.git"
     "git@github.com:axonivy/dataclass-editor-client.git"

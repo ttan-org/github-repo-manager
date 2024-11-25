@@ -40,7 +40,6 @@ public class GitHubRepos {
           "primefaces-themes",
           "process-editor-client",
           "process-editor-core",
-          "inscription-client",
           "config-editor-client",
           "form-editor-client",
           "ui-components",
