@@ -67,6 +67,7 @@ function raiseVersionOfOurRepos {
     "git@github.com:axonivy/form-editor-client.git"
     "git@github.com:axonivy/cluster-tests.git"
     "git@github.com:axonivy/core"
+    "git@github.com:axonivy/vscode-extensions.git"
   )
 
   runRepoUpdate 'updateSingleRepo' ${repos[@]}
