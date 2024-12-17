@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       dryRun:
-        description: 'Whether the build should really make a change or not'
+        description: 'Indicates whether to trigger changes to a product. By default, `dryRun` is set to `true`, meaning the action will perform a check without applying changes. When set to `false`, the action will both check for and add any missing files to the products.'
         default: 'true'
       workingOrgs:
-        description: 'Working Organizations to Scan'
+        description: 'Define organizations must be checked ex: axonivy,axonivy-market'
         default: 'axonivy,axonivy-market'
   push:
     branches: [ "master" ]
@@ -61,4 +61,4 @@ jobs:
       - name: Delete TOKEN file
         run: |
           rm token_file
-          echo "Token file deleted."
+          echo "Token file removed successfully."

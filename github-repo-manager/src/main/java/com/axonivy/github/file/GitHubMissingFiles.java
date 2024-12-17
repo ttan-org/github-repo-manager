@@ -12,7 +12,6 @@ import com.axonivy.github.file.GitHubFiles.FileMeta;
 
 public class GitHubMissingFiles {
 
-  private static final List<String> WORKING_ORGANIZATIONS = List.of("axonivy");
   private static final List<FileMeta> REQUIRED_FILES = List.of(LICENSE, SECURITY, CODE_OF_CONDUCT);
   private static final List<FileMeta> REMOVE_FILES = List.of();
 
@@ -38,7 +37,7 @@ public class GitHubMissingFiles {
   }
 
   private static List<String> getWorkingOrganizations() {
-    String inputtedValue = System.getProperty("GITHUB.WORKING.ORGANIZATIONS", String.join(",", WORKING_ORGANIZATIONS));
+    String inputtedValue = System.getProperty("GITHUB.WORKING.ORGANIZATIONS");
     return Arrays.asList(inputtedValue.split(","));
   }
 
