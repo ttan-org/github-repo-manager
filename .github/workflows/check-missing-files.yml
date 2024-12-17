@@ -9,7 +9,7 @@ on:
         description: 'Indicates whether to trigger changes to a product. By default, `dryRun` is set to `true`, meaning the action will perform a check without applying changes. When set to `false`, the action will both check for and add any missing files to the products.'
         default: 'true'
       workingOrgs:
-        description: 'Define organizations must be checked ex: axonivy,axonivy-market'
+        description: 'Define organizations must be checked, example: axonivy,axonivy-market'
         default: 'axonivy,axonivy-market'
   push:
     branches: [ "master" ]
