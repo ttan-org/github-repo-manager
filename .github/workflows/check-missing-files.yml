@@ -1,4 +1,4 @@
-name: Checking missing files
+name: Missing File Check
 
 on:
   schedule:
@@ -9,7 +9,7 @@ on:
         description: 'Indicates whether to trigger changes to a product. By default, `dryRun` is set to `true`, meaning the action will perform a check without applying changes. When set to `false`, the action will both check for and add any missing files to the products.'
         default: 'true'
       workingOrgs:
-        description: 'Define organizations must be checked, example: axonivy-market'
+        description: 'Define organizations to check SECURITY.md, CODE_OF_CONDUCT.md and LICENSE, example: axonivy-market'
         default: 'axonivy-market'
   push:
     branches: [ "master" ]
