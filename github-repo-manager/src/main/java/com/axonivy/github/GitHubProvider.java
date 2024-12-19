@@ -21,4 +21,13 @@ public class GitHubProvider {
       throw new RuntimeException(ex);
     }
   }
+
+  public static GitHub getGithubToken() {
+    String token = System.getProperty("GITHUB.TOKEN.FILE");
+    try {
+      return new GitHubBuilder().withOAuthToken(token).build();
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
 }

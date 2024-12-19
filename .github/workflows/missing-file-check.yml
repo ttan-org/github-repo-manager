@@ -1,0 +1,50 @@
+name: Missing File Check
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: 'Indicates whether to trigger changes to a product. By default, `dryRun` is set to `true`, meaning the action will perform a check without applying changes. When set to `false`, the action will both check for and add any missing files to the products.'
+        default: 'true'
+      workingOrgs:
+        description: 'Define organizations to check SECURITY.md, CODE_OF_CONDUCT.md and LICENSE, example: axonivy-market'
+        default: 'axonivy-market'
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@v5
+
+      - name: Set default values for dryRun and workingOrgs
+        id: set-defaults
+        run: |
+          echo "dryRun=${{ github.event.inputs.dryRun || 'true' }}" >> $GITHUB_ENV
+          echo "workingOrgs=${{ github.event.inputs.workingOrgs || 'axonivy-market' }}" >> $GITHUB_ENV        
+
+      - name: Build with Maven
+        working-directory: ./github-repo-manager
+        run: |
+          mvn -B clean compile exec:java \
+            -DDRY_RUN="${{ env.dryRun }}" \
+            -DGITHUB.TOKEN.FILE="${{ secrets.TOKEN }}" \
+            -Dexec.mainClass="com.axonivy.github.file.GitHubMissingFiles" \
+            -Dexec.args="${{ github.actor }}" \
+            -DGITHUB.WORKING.ORGANIZATIONS="${{ env.workingOrgs }}"
+        continue-on-error: true
