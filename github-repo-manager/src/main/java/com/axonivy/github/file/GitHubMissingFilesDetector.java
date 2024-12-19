@@ -28,7 +28,7 @@ public class GitHubMissingFilesDetector {
   public GitHubMissingFilesDetector(FileMeta fileMeta, String user) throws IOException {
     Objects.requireNonNull(fileMeta);
     this.reference = new FileReference(fileMeta);
-    this.github = GitHubProvider.get();
+    this.github = GitHubProvider.getGithubToken();
     this.ghActor = github.getUser(user);
   }
 
