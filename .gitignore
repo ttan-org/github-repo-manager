@@ -3,3 +3,74 @@
 /workspace.xml
 ./idea/*
 */idea/*
+# IntelliJ IDEA specific files
+.idea/
+
+# User-specific files
+*.iml
+*.iws
+
+# Logs
+/logs/
+/*.log
+
+# Compiled class files
+/out/
+/target/
+/build/
+
+# Maven/Gradle specific files
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Eclipse and NetBeans specific files
+*.classpath
+*.project
+*.settings/
+.nb-gradle/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Generated files
+*.class
+*.jar
+*.war
+*.ear
+*.min.js
+*.min.css
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+
+# Coverage reports
+/coverage/
+*.lcov
+
+# Node.js specific files (if applicable)
+/node_modules/
+/dist/
+/npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Java specific files
+*.log
+*.hprof
+
+# Spring Boot specific files
+/spring-boot-devtools.properties
+application-*.properties
+application-*.yml
+
+# Docker specific files
+*.pid
+*.seed
+*.env
