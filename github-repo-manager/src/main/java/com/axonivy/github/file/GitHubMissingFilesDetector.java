@@ -125,6 +125,9 @@ public class GitHubMissingFilesDetector {
     } catch (GHFileNotFoundException notFoundException) {
       LOG.error("Commit new file {0} to repo failed due to lack of permissions", reference.meta().filePath());
       isNotSync = true;
+    } catch (HttpException e) {
+      LOG.error("Commit new file {0} to repo failed due to", e.getMessage());
+      isNotSync = true;
     }
     createNewPullRequest(repo, refURL);
   }
