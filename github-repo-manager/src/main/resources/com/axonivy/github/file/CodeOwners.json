@@ -51,5 +51,6 @@
   { "product": "axonivy-market/ui-path-connector", "owner": "@axonivy-market/team-octopus" },
   { "product": "axonivy-market/threema-connector", "owner": "@axonivy-market/team-octopus" },
   { "product": "axonivy-market/tel-search-ch-connector", "owner": "@axonivy-market/team-octopus" },
-  { "product": "axonivy-market/srf-weather-connector", "owner": "@axonivy-market/team-octopus" }
+  { "product": "axonivy-market/srf-weather-connector", "owner": "@axonivy-market/team-octopus" },
+  { "product": "axonivy-market/gdpr-utils", "owner": "@axonivy-market/team-octopus" }
 ]
