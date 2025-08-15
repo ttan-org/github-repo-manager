@@ -41,9 +41,11 @@ jobs:
 
       - name: Build with Maven
         working-directory: ./github-repo-manager
-        run: mvn exec:java \
-          -DDRY_RUN=true \
-          -DGITHUB.TOKEN="${{ secrets.TOKEN }}" \
-          -Dexec.mainClass="com.axonivy.github.file.GitHubMissingFiles" \
-          -Dexec.args="${{ github.actor }}" \
-          -DGITHUB.WORKING.ORGANIZATIONS=ttan-org
+       - name: Run GitHub Missing Files
+  run: mvn exec:java \
+         -DDRY_RUN=true \
+         -DGITHUB.TOKEN="${{ secrets.TOKEN }}" \
+         -Dexec.mainClass="com.axonivy.github.file.GitHubMissingFiles" \
+         -Dexec.args="${{ github.actor }}" \
+         -DGITHUB.WORKING.ORGANIZATIONS=ttan-org
+
