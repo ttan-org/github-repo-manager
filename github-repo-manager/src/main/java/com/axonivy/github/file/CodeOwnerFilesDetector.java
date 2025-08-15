@@ -13,7 +13,7 @@ public class CodeOwnerFilesDetector extends GitHubMissingFilesDetector {
   private static final String CODE_OWNER_FILE_NAME = "CodeOwners.json";
   private static final TypeReference<List<CodeOwner>> CODE_OWNER_TYPE_REFERENCE = new TypeReference<>() {
   };
-  private static final String CODE_OWNER_FORMAT = "*  %s";
+  private static final String CODE_OWNER_FORMAT = "* %s";
   private static final ObjectMapper objectMapper = new ObjectMapper();
   private List<CodeOwner> codeOwners;
 
@@ -34,10 +34,10 @@ public class CodeOwnerFilesDetector extends GitHubMissingFilesDetector {
     if (StringUtils.isBlank(repoURL)) {
       return super.loadReferenceFileContent(repoURL);
     }
-
     for (var codeOwner : getAllCodeOwners()) {
       if (StringUtils.contains(repoURL, codeOwner.product)) {
-        return String.format(CODE_OWNER_FORMAT, codeOwner.owner).getBytes();
+        String owners = codeOwner.getOwnersString();
+        return String.format(CODE_OWNER_FORMAT, owners).getBytes();
       }
     }
     return null;
@@ -50,6 +50,20 @@ public class CodeOwnerFilesDetector extends GitHubMissingFilesDetector {
     return codeOwners;
   }
 
-  record CodeOwner(String product, String owner) {
+  static class CodeOwner {
+    public String product;
+    public Object owner;
+
+    public String getOwnersString() {
+      if (owner instanceof String) {
+        return (String) owner;
+      }
+      if (owner instanceof List) {
+        @SuppressWarnings("unchecked")
+        List<Object> owners = (List<Object>) owner;
+        return owners.stream().map(Object::toString).reduce("", (a, b) -> a + " " + b).trim();
+      }
+      return owner != null ? owner.toString() : "";
+    }
   }
 }
