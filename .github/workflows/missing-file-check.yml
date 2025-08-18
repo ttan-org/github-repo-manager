@@ -46,8 +46,8 @@ jobs:
         working-directory: ./github-repo-manager
         run: |
           mvn -B clean compile exec:java \
-            -DDRY_RUN="${{ env.dryRun }}" \
             -DGITHUB.TOKEN="${{ secrets.TOKEN }}" \
+            -DDRY_RUN="${{ env.dryRun }}" \
             -Dexec.mainClass="com.axonivy.github.file.GitHubMissingFiles" \
             -Dexec.args="${{ github.actor }}" \
             -DGITHUB.WORKING.ORGANIZATIONS="${{ env.workingOrgs }}"
