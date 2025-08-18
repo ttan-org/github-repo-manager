@@ -50,5 +50,6 @@
   { "product": "ttan-org/market-monitor", "owner": ["@axonivy-market/team-octopus", "@ivy-rew"] },
   { "product": "ttan-org/deepl-connector", "owner": ["@axonivy-market/team-octopus", "@ivy-rew"] },
   { "product": "ttan-org/openai-connector", "owner": ["@axonivy-market/team-octopus", "@ivy-rew"]},
-  { "product": "ttan-org/mail-connector", "owner": ["@axonivy-market/team-octopus", "@axonivy-market/team-atomic"]}
+  { "product": "ttan-org/a-trust-connector2", "owner": "@axonivy-market/team-octopus"},
+  { "product": "ttan-org/hello", "owner": ["@axonivy-market/team-octopus", "@axonivy-market/team-atomic"]}
 ]

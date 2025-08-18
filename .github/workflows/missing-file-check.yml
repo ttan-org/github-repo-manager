@@ -10,7 +10,7 @@ on:
         default: 'true'
       workingOrgs:
         description: 'Tên organization cần kiểm tra'
-        default: 'axonivy-market'
+        default: 'ttan-org'
   push:
     branches: [ "master" ]
 
