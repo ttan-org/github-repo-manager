@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       dryRun:
-        description: 'true = chỉ kiểm tra, false = kiểm tra và thêm file thiếu'
-        default: 'true'
+        description: 'false = chỉ kiểm tra, true = kiểm tra và thêm file thiếu'
+        default: 'false'
       workingOrgs:
         description: 'Tên organization cần kiểm tra'
         default: 'ttan-org'
